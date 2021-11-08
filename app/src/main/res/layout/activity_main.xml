@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:gravity="center"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/ximex_mobi_welcome_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="XimexMobi"
+        android:textColor="@color/white"
+        android:textSize="40sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/theme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ximex_mobi_welcome_text"
+        android:layout_centerInParent="true"
+        android:text="The best place to trade devices"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/enter_details_below"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/theme"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="40dp"
+        android:text="Enter your details below to register"
+        android:textColor="@color/white"
+        android:textSize="18sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/input_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:boxStrokeColor="@null"
+        android:layout_below="@+id/enter_details_below"
+        android:layout_margin="5dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="name"
+            android:inputType="text"
+            android:textColor="@color/black" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--<TextView
+        android:id="@+id/cell_indicator_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/input_container"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:text="Cell number"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        android:textStyle="bold" />-->
+
+    <LinearLayout
+        android:id="@+id/cell_num_linear"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_margin="5dp"
+        android:layout_below="@+id/input_container"
+        android:orientation="horizontal"
+        android:background="@color/white">
+
+        <com.hbb20.CountryCodePicker
+            android:id="@+id/ccp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/cell_num_container"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            app:boxStrokeColor="@null"
+            android:layout_below="@+id/cell_indicator_txt"
+            android:layout_margin="5dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="cell number"
+                android:inputType="number"
+                android:textColor="@color/black" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="55dp"
+        android:layout_below="@+id/cell_num_linear"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="15dp"
+        android:backgroundTint="@color/yellow_theme"
+        android:text="continue" />
+
+
+</RelativeLayout>
