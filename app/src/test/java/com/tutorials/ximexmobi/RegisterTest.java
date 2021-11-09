@@ -1,12 +1,10 @@
 package com.tutorials.ximexmobi;
 
-import static org.junit.Assert.*;
-
 import org.junit.Before;
 import org.junit.Test;
 
 //@RunWith (MockitoJUnitRunner.class)
-public class MainActivityTest {
+public class RegisterTest {
 
     // region constants ---------------------------------------------------------------------------
 
@@ -17,11 +15,11 @@ public class MainActivityTest {
     // endregion helper fields ---------------------------------------------------------------------
 
 
-    MainActivity SUT;
+    Register SUT;
 
     @Before
     public void setup() throws Exception {
-        SUT = new MainActivity();
+        SUT = new Register();
 
     }
 
