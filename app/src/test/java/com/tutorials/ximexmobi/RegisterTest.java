@@ -14,7 +14,7 @@ public class RegisterTest {
 
     // endregion helper fields ---------------------------------------------------------------------
 
-
+////
     Register SUT;
 
     @Before
