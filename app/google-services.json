@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "829184953671",
+    "project_id": "ximexmobi",
+    "storage_bucket": "ximexmobi.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:829184953671:android:46e0d83306d3d411fad062",
+        "android_client_info": {
+          "package_name": "com.tutorials.ximexmobi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "829184953671-ibj5f97bli1om5beq43pmbtidudbu5ri.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tutorials.ximexmobi",
+            "certificate_hash": "76575107afb6602c12a70e32deb8056dd087b88c"
+          }
+        },
+        {
+          "client_id": "829184953671-vpd8m4jp981rq7tv0fbpq0eb3723bg4o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxZ3Eg2r4mFxVQkVbYLszW9fN55trA2AA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "829184953671-vpd8m4jp981rq7tv0fbpq0eb3723bg4o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

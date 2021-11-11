@@ -53,8 +53,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
+            android:textColorLink="@color/black"
+            android:textColorHint="@color/black"
             android:hint="name"
             android:inputType="text"
+            android:textSize="18sp"
             android:textColor="@color/black" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -100,8 +103,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:hint="cell number"
+                android:textColorHint="@color/black"
+                android:textColorLink="@color/black"
+                android:gravity="center"
                 android:inputType="number"
+                android:textSize="18sp"
                 android:textColor="@color/black" />
 
         </com.google.android.material.textfield.TextInputLayout>
