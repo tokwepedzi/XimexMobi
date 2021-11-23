@@ -11,15 +11,20 @@
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
 
-    <fragment
-        android:id="@+id/nav_gallery"
+  <!--  <fragment
+        android:id="@+id/nav_post"
         android:name="com.tutorials.ximexmobi.ui.gallery.GalleryFragment"
         android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        tools:layout="@layout/fragment_gallery" />-->
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.tutorials.ximexmobi.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_my_ads"
+        android:name="com.tutorials.ximexmobi.ui.myads.MyAdsFragment"
+        android:label="My Ads"
+        tools:layout="@layout/fragment_myads" />
+    <fragment
+        android:id="@+id/nav_ximex_store"
+        android:name="com.tutorials.ximexmobi.ui.store.XimexStoreFragment"
+        android:label="Ximex Store"
+        tools:layout="@layout/fragment_ximexstore" />
 </navigation>

@@ -13,7 +13,6 @@ public class GlobalMethods {
 
     //Send user to dashboard method
     public void sendUserToDashboard(){
-
         Intent intent = new Intent(mContext, Dashboard.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);

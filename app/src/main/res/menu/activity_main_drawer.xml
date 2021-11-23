@@ -6,15 +6,19 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_baseline_home_24"
             android:title="@string/menu_home" />
+        <!--<item
+            android:id="@+id/nav_post"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="Post"/>-->
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/menu_gallery" />
+            android:id="@+id/nav_my_ads"
+            android:icon="@drawable/ic_click_ad_icon"
+            android:title="My Ads" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_slideshow" />
+            android:id="@+id/nav_ximex_store"
+            android:icon="@drawable/ic_cart_icon"
+            android:title="Ximex Store" />
     </group>
 </menu>

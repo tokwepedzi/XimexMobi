@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.XimexMobi">
         <activity
+            android:name=".ui.myads.PostAdActivity"
+            android:exported="false" />
+        <activity
             android:name=".SendOTP"
             android:exported="false" />
         <activity
