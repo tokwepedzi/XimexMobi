@@ -1,13 +1,18 @@
 package com.tutorials.ximexmobi;
 
+import android.Manifest;
+import android.app.Dialog;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Menu;
+import android.view.ViewGroup;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -15,12 +20,17 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.tutorials.ximexmobi.databinding.ActivityDashboardBinding;
+import com.tutorials.ximexmobi.models.XimexUser;
 
 public class Dashboard extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityDashboardBinding binding;
+    private XimexUser ximexUser;
+    private FirebaseAuth firebaseAuth;
+    private Dialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +61,21 @@ public class Dashboard extends AppCompatActivity {
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav_view_menu);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
+
+        firebaseAuth = FirebaseAuth.getInstance();
+
+        ximexUser = new XimexUser();
+        ximexUser.setUid(firebaseAuth.getUid());
+        dialog = new Dialog(Dashboard.this);
+        dialog.setContentView(R.layout.permission_request);
+        dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialog_bg));
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.setCancelable(false);
+        if(ContextCompat.checkSelfPermission(Dashboard.this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED){
+            dialog.show();
+        }
+
     }
 
     @Override

@@ -44,7 +44,7 @@ public class MyAdsFragment extends Fragment {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(), "Adding .....", Toast.LENGTH_SHORT).show();
+
                 startActivity(new Intent(getActivity(),PostAdActivity.class));
             }
         });

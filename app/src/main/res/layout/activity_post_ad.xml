@@ -79,7 +79,6 @@
             </LinearLayout>
 
 
-
             <ImageButton
                 android:id="@+id/add_images_button"
                 android:layout_width="match_parent"
