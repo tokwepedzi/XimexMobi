@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Menu;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -38,6 +40,7 @@ public class Dashboard extends AppCompatActivity {
 
         binding = ActivityDashboardBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
 
         setSupportActionBar(binding.appBarDashboard.toolbar);
         binding.appBarDashboard.fab.setOnClickListener(new View.OnClickListener() {
@@ -75,6 +78,40 @@ public class Dashboard extends AppCompatActivity {
                 != PackageManager.PERMISSION_GRANTED){
             dialog.show();
         }
+
+        Button okay = dialog.findViewById(R.id.permission_gran_btn);
+        Button cancel = dialog.findViewById(R.id.permission_deny_btn);
+
+
+        okay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                ActivityCompat.requestPermissions(
+                        Dashboard.this,
+                        new String[]
+                                {
+                                        Manifest.permission.ACCESS_FINE_LOCATION,
+                                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                                        Manifest.permission.BLUETOOTH,
+                                        Manifest.permission.BLUETOOTH_ADMIN,
+                                        Manifest.permission.BLUETOOTH_PRIVILEGED,
+                                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                                        //Manifest.permission.READ_EXTERNAL_STORAGE
+                                }, 0);
+                dialog.dismiss();
+                return;
+
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+
+            }
+        });
 
     }
 
