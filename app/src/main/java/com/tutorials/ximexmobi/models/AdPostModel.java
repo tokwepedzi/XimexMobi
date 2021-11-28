@@ -8,7 +8,7 @@ public class AdPostModel {
     private @ServerTimestamp
     Date timestamp;
     public String uid, posteddate, img1, img2, img3, img4, img5, img6, itemname, description, price,
-            condition, totalviews, availability,adid;
+            condition, totalviews, availability,adid,category;
 
     public AdPostModel() {
     }
@@ -16,7 +16,7 @@ public class AdPostModel {
     public AdPostModel(Date timestamp, String uid, String posteddate, String img1, String img2,
                        String img3, String img4, String img5, String img6, String itemname,
                        String description, String price, String condition, String totalviews,
-                       String availability, String adid) {
+                       String availability, String adid, String category) {
         this.timestamp = timestamp;
         this.uid = uid;
         this.posteddate = posteddate;
@@ -33,6 +33,7 @@ public class AdPostModel {
         this.totalviews = totalviews;
         this.availability = availability;
         this.adid = adid;
+        this.category = category;
     }
 
     public Date getTimestamp() {
@@ -161,5 +162,13 @@ public class AdPostModel {
 
     public void setAdid(String adid) {
         this.adid = adid;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }
