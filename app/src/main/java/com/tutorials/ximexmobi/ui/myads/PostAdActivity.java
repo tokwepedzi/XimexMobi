@@ -3,7 +3,6 @@ package com.tutorials.ximexmobi.ui.myads;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,9 +10,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
+import android.provider.MediaStore;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageButton;
@@ -26,23 +26,20 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tutorials.ximexmobi.R;
-import com.tutorials.ximexmobi.SendOTP;
-import com.tutorials.ximexmobi.databinding.ActivityDashboardBinding;
 import com.tutorials.ximexmobi.databinding.ActivityPostAdBinding;
-import com.tutorials.ximexmobi.databinding.FragmentMyadsBinding;
 import com.tutorials.ximexmobi.models.AdPostModel;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,6 +48,7 @@ import java.util.Date;
 public class PostAdActivity extends AppCompatActivity {
     private ActivityPostAdBinding activityPostAdBinding;
     private ArrayList<Uri> imageUris;
+    private ArrayList<byte[]> bitmapArrayListData;
     private ArrayList<String> imageUrls;
     private FirebaseFirestore AdsRef ;
     private FirebaseAuth firebaseAuth;
@@ -90,6 +88,7 @@ public class PostAdActivity extends AppCompatActivity {
         //  init arraylist
         imageUris = new ArrayList<>();
         imageUrls = new ArrayList<>();
+        bitmapArrayListData = new ArrayList<byte[]>();
 
         imageSwitcher.setFactory(new ViewSwitcher.ViewFactory() {
             @Override
@@ -202,9 +201,60 @@ public class PostAdActivity extends AppCompatActivity {
 
     private void uploadImagesAndGetLinks(AdPostModel adPostModel1, DocumentReference documentReference) {
         for(int i=0;i<imageUris.size();i++){
-            StorageReference ImagesRef = storageReference.child(firebaseAuth.getUid()).child(adPostModel1.getAdid()).child(System.currentTimeMillis() + "." + getFileExtension(imageUris.get(i)));
+            StorageReference ImagesRef = storageReference.child(firebaseAuth.getUid()).child(adPostModel1.getAdid()).child(System.currentTimeMillis() + "." + "jpg");
             int j= i;
-            ImagesRef.putFile(imageUris.get(i)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            UploadTask uploadTask = ImagesRef.putBytes(bitmapArrayListData.get(i));
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    ImagesRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            imageUrls.add(uri.toString());
+                            try{
+                                switch (j){
+                                    case 0:
+                                        adPostModel1.setImg1(uri.toString());
+                                        break;
+                                    case 1:
+                                        adPostModel1.setImg2(uri.toString());
+                                        break;
+                                    case 2:
+                                        adPostModel1.setImg3(uri.toString());
+                                        break;
+                                    case 3:
+                                        adPostModel1.setImg4(uri.toString());
+                                        break;
+                                    case 4:
+                                        adPostModel1.setImg5(uri.toString());
+                                        break;
+                                    case 5:
+                                        adPostModel1.setImg6(uri.toString());
+                                        break;
+                                }}
+                            catch (Exception e){
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if(task.isSuccessful()){
+                                documentReference.set(adPostModel1);
+                            }
+                        }
+                    });
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+                }
+            });
+
+           /* ImagesRef.putFile(imageUris.get(i)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     ImagesRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -244,7 +294,7 @@ public class PostAdActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Uri> task) {
                             if(task.isSuccessful()){
-                                /*new Handler().postDelayed(new Runnable() {
+                                *//*new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
                                         try{
@@ -258,7 +308,7 @@ public class PostAdActivity extends AppCompatActivity {
                                             Toast.makeText(getApplicationContext(), "Error Handled", Toast.LENGTH_SHORT).show();
                                         }
                                     }
-                                },5000);*/
+                                },5000);*//*
                                 documentReference.set(adPostModel1);
                             }
                         }
@@ -275,7 +325,7 @@ public class PostAdActivity extends AppCompatActivity {
                    // mProgressBar.setVisibility(View.INVISIBLE);
                     Toast.makeText(getApplicationContext(), "Uploading profile image failed!" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-            });
+            });*/
 
         }
 
@@ -311,7 +361,17 @@ public class PostAdActivity extends AppCompatActivity {
                             for (int i = 0; i < count; i++) {
                                 //  get image uri at specific index
                                 Uri imageUri = data.getClipData().getItemAt(i).getUri();
-                                imageUris.add(imageUri);//  add to list
+                                try {
+                                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(),Uri.parse(imageUri.toString()));
+                                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                    bitmap.compress(Bitmap.CompressFormat.JPEG,25,baos);
+                                    byte[] bytesdata = baos.toByteArray();
+                                    imageUris.add(imageUri);//  add to list
+                                    bitmapArrayListData.add(bytesdata);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
 
                             }
                             //  set first image to our image switcher

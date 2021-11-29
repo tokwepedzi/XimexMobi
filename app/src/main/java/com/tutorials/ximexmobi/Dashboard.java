@@ -23,6 +23,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.tutorials.ximexmobi.databinding.ActivityDashboardBinding;
 import com.tutorials.ximexmobi.models.XimexUser;
 
@@ -34,12 +35,14 @@ public class Dashboard extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private Dialog dialog;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         binding = ActivityDashboardBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
 
 
         setSupportActionBar(binding.appBarDashboard.toolbar);

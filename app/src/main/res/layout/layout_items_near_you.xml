@@ -8,19 +8,19 @@
 
     <ImageView
         android:id="@+id/listed_item_near_you_image"
-        android:layout_width="150dp"
-        android:layout_height="150dp"/>
+        android:layout_width="120dp"
+        android:layout_height="120dp"/>
     <TextView
         android:id="@+id/listed_item_near_you_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="15sp"
+        android:textSize="14sp"
         android:text="Price: 200 USD"/>
     <TextView
-        android:id="@+id/listed_item_near_you_km_away"
+        android:id="@+id/listed_item_near_you_posted_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="15sp"
+        android:textSize="14sp"
         android:text="Distance: 20Km away"/>
 
 </LinearLayout>
