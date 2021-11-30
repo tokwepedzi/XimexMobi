@@ -200,6 +200,7 @@ public class PostAdActivity extends AppCompatActivity {
     }
 
     private void uploadImagesAndGetLinks(AdPostModel adPostModel1, DocumentReference documentReference) {
+      bitmapArrayListData.clear();
         for(int i=0;i<imageUris.size();i++){
             StorageReference ImagesRef = storageReference.child(firebaseAuth.getUid()).child(adPostModel1.getAdid()).child(System.currentTimeMillis() + "." + "jpg");
             int j= i;

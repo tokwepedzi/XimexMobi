@@ -1,10 +1,12 @@
 package com.tutorials.ximexmobi.ui.home;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,9 +18,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.tutorials.ximexmobi.R;
 import com.tutorials.ximexmobi.adapters.AdapterClassViewAllListedAds;
 import com.tutorials.ximexmobi.databinding.FragmentHomeBinding;
@@ -31,60 +35,68 @@ public class HomeFragment extends Fragment implements AdapterClassViewAllListedA
 
     //private HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
-    private RecyclerView recyclerViewAdsNearYou;
+    private RecyclerView recyclerViewAdsNearYou, recyclerViewListedItems;
     private AdapterClassViewAllListedAds viewAllListedAdsAdapter;
-    private List<AdPostModel> adPostModelNearYouList;
+    private AdapterClassViewAllListedAds viewAllListedItemsAdapter;
+    private List<AdPostModel> adPostModelNearYouList,adPostModelListedItems;
     private androidx.appcompat.widget.SearchView mSearchbox;
     private FirebaseFirestore ListedItemsRef;
-    private AdPostModel adPostModel;
+    //private AdPostModel adPostModel;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-       /* homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);*/
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         final TextView textView = binding.itemsNearYouHeadingTxt;
         recyclerViewAdsNearYou = binding.itemsNearYouRecyclerview;
+        recyclerViewListedItems = binding.listedItemsRecyclerview;
         ListedItemsRef = FirebaseFirestore.getInstance();
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false);
-     recyclerViewAdsNearYou.setLayoutManager(linearLayoutManager);
-       /* homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });*/
-        adPostModel = new AdPostModel();
+
+
+        //adPostModel = new AdPostModel();
         adPostModelNearYouList= new ArrayList<>();
+        adPostModelListedItems = new ArrayList<>();
 
 
-        DocumentReference ListedAdsRef = ListedItemsRef
-                .collection("Adverts")
-                .document("gaXxvyHVOgNjA9gY2xd0");
+        CollectionReference ListedAdsRef = ListedItemsRef.collection("Adverts");
+
+        ListedAdsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
 
 
-        ListedAdsRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false);
+                recyclerViewAdsNearYou.setLayoutManager(linearLayoutManager);
                 if(task.isSuccessful()){
-                    adPostModel= task.getResult().toObject(AdPostModel.class);
-                    adPostModelNearYouList.add(adPostModel);
-                    setAdapter();
+                    List AdIdsLis = new ArrayList();
+                    for(DocumentSnapshot documentSnapshot: task.getResult()){
+                        if(documentSnapshot.exists()){
+                            AdPostModel adPostModel1 = documentSnapshot.toObject(AdPostModel.class);
+                            adPostModelNearYouList.add(adPostModel1);
+                            adPostModelListedItems.add(adPostModel1);
+                            setAdapter();
+                        }
+                    }
                 }
             }
         });
-
         return root;
     }
 
     private void setAdapter() {
         viewAllListedAdsAdapter = new AdapterClassViewAllListedAds(adPostModelNearYouList, getContext(), this::viewSelectedAd);
+        viewAllListedItemsAdapter = new AdapterClassViewAllListedAds(adPostModelListedItems,getContext(),this::viewSelectedAd);
         recyclerViewAdsNearYou.setAdapter(viewAllListedAdsAdapter);
+        recyclerViewListedItems.setAdapter(viewAllListedItemsAdapter);
     }
 
     @Override

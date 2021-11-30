@@ -55,7 +55,9 @@ public ListedAdClickListener listedAdClickListener;
 
       Context context = parent.getContext();
       View view = LayoutInflater.from(context).inflate(R.layout.layout_items_near_you,parent,false);
+      View view1 = LayoutInflater.from(context).inflate(R.layout.layout_listed_items,parent,false);
       return new ViewHolder(view);
+
 
     }
 
