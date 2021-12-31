@@ -2,13 +2,14 @@ package com.tutorials.ximexmobi.models;
 
 import com.google.firebase.firestore.ServerTimestamp;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class AdPostModel {
+public class AdPostModel implements Serializable {
     private @ServerTimestamp
     Date timestamp;
     public String uid, posteddate, img1, img2, img3, img4, img5, img6, itemname, description, price,
-            condition, totalviews, availability,adid,category;
+            condition, totalviews, availability,adid,category,responses;
 
     public AdPostModel() {
     }
@@ -16,7 +17,7 @@ public class AdPostModel {
     public AdPostModel(Date timestamp, String uid, String posteddate, String img1, String img2,
                        String img3, String img4, String img5, String img6, String itemname,
                        String description, String price, String condition, String totalviews,
-                       String availability, String adid, String category) {
+                       String availability, String adid, String category,String responses) {
         this.timestamp = timestamp;
         this.uid = uid;
         this.posteddate = posteddate;
@@ -34,6 +35,7 @@ public class AdPostModel {
         this.availability = availability;
         this.adid = adid;
         this.category = category;
+        this.responses = responses;
     }
 
     public Date getTimestamp() {
@@ -170,5 +172,13 @@ public class AdPostModel {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getResponses() {
+        return responses;
+    }
+
+    public void setResponses(String responses) {
+        this.responses = responses;
     }
 }

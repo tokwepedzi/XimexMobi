@@ -18,7 +18,7 @@ public class XimexUser {
     public XimexUser(GeoPoint geoPoint, Date timestamp, String fullname, String email,
                      String whatsappnumber, String usersince, String uid, String callsnumber,
                      String totalitemsbought, String usertype, String address, String surburb,
-                     String totalitemssold) {
+                     String totalads) {
         this.geoPoint = geoPoint;
         this.timestamp = timestamp;
         this.fullname = fullname;
@@ -31,7 +31,7 @@ public class XimexUser {
         this.usertype = usertype;
         this.address = address;
         this.surburb = surburb;
-        this.totalitemssold = totalitemssold;
+        this.totalitemssold = totalads;
     }
 
     public GeoPoint getGeoPoint() {

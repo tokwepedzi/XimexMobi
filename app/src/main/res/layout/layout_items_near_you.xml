@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:padding="10dp">
 
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="5dp">
+
+
+
     <ImageView
+
         android:id="@+id/listed_item_near_you_image"
-        android:layout_width="120dp"
-        android:layout_height="120dp"/>
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        /> </androidx.cardview.widget.CardView>
     <TextView
         android:id="@+id/listed_item_near_you_price"
         android:layout_width="wrap_content"

@@ -53,6 +53,7 @@ public class PostAdActivity extends AppCompatActivity {
     private FirebaseFirestore AdsRef ;
     private FirebaseAuth firebaseAuth;
     private StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+    private boolean isEditingAStatus;
 
     //position of selected image
     int position = 0;
@@ -66,6 +67,15 @@ public class PostAdActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_ad);
+        try{
+        Intent intent = getIntent();
+        AdPostModel adPostModeleditable = (AdPostModel) intent.getSerializableExtra("editad");
+        Boolean isEditingAd = (Boolean) intent.getExtras().getBoolean("editingclicked") ;
+        isEditingAStatus = isEditingAd;}
+        catch (NullPointerException e){
+            isEditingAStatus=false;
+            e.printStackTrace();
+        }
 
         activityPostAdBinding = ActivityPostAdBinding.inflate(getLayoutInflater());
         setContentView(activityPostAdBinding.getRoot());
@@ -361,11 +371,29 @@ public class PostAdActivity extends AppCompatActivity {
                             }
                             for (int i = 0; i < count; i++) {
                                 //  get image uri at specific index
+                                Bitmap editedbitmap;
                                 Uri imageUri = data.getClipData().getItemAt(i).getUri();
                                 try {
+
                                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(),Uri.parse(imageUri.toString()));
                                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                    bitmap.compress(Bitmap.CompressFormat.JPEG,25,baos);
+                                    if(bitmap.getWidth()>=bitmap.getHeight()){
+                                         editedbitmap = Bitmap.createBitmap(bitmap,bitmap.getWidth()/2 -bitmap.getHeight()/2,0
+                                        ,bitmap.getHeight(),bitmap.getHeight());
+                                        bitmap.compress(Bitmap.CompressFormat.JPEG,50,baos);
+                                    }else {
+                                        editedbitmap = Bitmap.createBitmap(
+                                                bitmap,
+                                                0,
+                                                bitmap.getHeight()/2 - bitmap.getWidth()/2,
+                                                bitmap.getWidth(),
+                                                bitmap.getWidth()
+
+                                        );
+                                        bitmap.compress(Bitmap.CompressFormat.JPEG,50,baos);
+
+                                    }
+
                                     byte[] bytesdata = baos.toByteArray();
                                     imageUris.add(imageUri);//  add to list
                                     bitmapArrayListData.add(bytesdata);

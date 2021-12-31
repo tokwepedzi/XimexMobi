@@ -55,7 +55,7 @@
             android:background="@color/white"
             android:textColorLink="@color/black"
             android:textColorHint="@color/black"
-            android:hint="name"
+            android:hint="Full name"
             android:inputType="text"
             android:textSize="18sp"
             android:textColor="@color/black" />
