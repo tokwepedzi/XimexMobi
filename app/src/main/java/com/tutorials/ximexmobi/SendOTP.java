@@ -6,7 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.chaos.view.PinView;
@@ -30,14 +32,15 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class SendOTP extends AppCompatActivity {
-    public static final String TAG ="sendotp";
-    private PinView mPinView ;
-    private Button mContinue;
+    public static final String TAG = "sendotp";
+    private PinView mPinView;
+    private Button mContinue, mResendBtn;
     private FirebaseAuth mAuth;
     private FirebaseFirestore XimexUserRef;
     private String codeFromFirebase;
     private PhoneAuthProvider.ForceResendingToken token;
-    private String ximexuserfullanme,ximexusercellnum;
+    private String ximexuserfullanme, ximexusercellnum;
+    private ProgressBar mOTPProgress;
 
 
     @Override
@@ -48,16 +51,39 @@ public class SendOTP extends AppCompatActivity {
         // -----------Hooks--------------------------------------------------------------------------
         mPinView = findViewById(R.id.pinview);
         mContinue = findViewById(R.id.continue_btn);
+        mResendBtn = findViewById(R.id.resend_btn);
+        mOTPProgress = findViewById(R.id.otp_progress);
         mAuth = FirebaseAuth.getInstance();
         XimexUserRef = FirebaseFirestore.getInstance();
 
         //  Receive user details from register activity
-        Intent intent =  getIntent();
+        Intent intent = getIntent();
         String fullanme = intent.getStringExtra("name");
         String cellnumber = intent.getStringExtra("cell");
-        ximexuserfullanme=fullanme;
+        ximexuserfullanme = fullanme;
         ximexusercellnum = cellnumber;
         sendVerificationCode(cellnumber);
+
+        mResendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                resendOTP(cellnumber);
+            }
+        });
+
+        mContinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mPinView.getText().equals("")) {
+                    mPinView.setError("Field cannot be empty");
+                    return;
+                }else {
+                    String otp = mPinView.getText().toString();
+                    PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.getCredential(codeFromFirebase,otp);
+                    signInWithPhoneAuthCredential(phoneAuthCredential);
+                }
+            }
+        });
     }
 
     private void sendVerificationCode(String cellnumber) {
@@ -71,13 +97,26 @@ public class SendOTP extends AppCompatActivity {
         PhoneAuthProvider.verifyPhoneNumber(phoneAuthOptions);
     }
 
+    public void resendOTP(String cellnumber) {
+        PhoneAuthOptions phoneAuthOptions = PhoneAuthOptions.newBuilder(mAuth)
+
+                .setPhoneNumber(cellnumber)       // Phone number to verify
+                .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
+                .setActivity(this)                 // Activity (for callback binding)
+                .setCallbacks(mCallbacks)  // OnVerificationStateChangedCallbacks
+                .setForceResendingToken(token)
+                .build();
+        PhoneAuthProvider.verifyPhoneNumber(phoneAuthOptions);
+    }
+
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks =
             new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                 @Override
                 public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
                     super.onCodeSent(s, forceResendingToken);
-                    codeFromFirebase=s;
+                    codeFromFirebase = s;
                     token = forceResendingToken;
+                    mResendBtn.setVisibility(View.GONE);
                 }
 
                 @Override
@@ -93,11 +132,14 @@ public class SendOTP extends AppCompatActivity {
                 @Override
                 public void onVerificationFailed(@NonNull FirebaseException e) {
                     Toast.makeText(SendOTP.this, "Error:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    mOTPProgress.setVisibility(View.GONE);
                 }
 
                 @Override
                 public void onCodeAutoRetrievalTimeOut(@NonNull String s) {
                     super.onCodeAutoRetrievalTimeOut(s);
+                    mResendBtn.setVisibility(View.VISIBLE);
+                    //mContinue.setVisibility(View.GONE);
                     // Make Resend button visible
                     // and impliment onclick listener here https://www.youtube.com/watch?v=A_AfylfINQM,   https://www.youtube.com/watch?v=UQ_y5Cq5tS4
                 }
@@ -109,20 +151,20 @@ public class SendOTP extends AppCompatActivity {
     }
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
-        mAuth.signInWithCredential(credential )
+        mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
 
                             FirebaseUser user = task.getResult().getUser();
                             // Update UI
-                           // Add Ximexuser to firestore
+                            // Add Ximexuser to firestore
                             addXimexUserToFirestore();
 
-                        }else {
+                        } else {
                             // Sign in failed, display a message and update the UI
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
@@ -130,7 +172,15 @@ public class SendOTP extends AppCompatActivity {
                             }
                         }
                     }
-                });
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "onSingINWCredentialFailure: ");
+                Toast.makeText(getApplicationContext(), "Signin failure: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                mOTPProgress.setVisibility(View.GONE);
+                return;
+            }
+        });
 
        /* mAuth.getCurrentUser().linkWithCredential(credential).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
@@ -152,37 +202,37 @@ public class SendOTP extends AppCompatActivity {
     }
 
     private void addXimexUserToFirestore() {
-        try{
-        Date date = new Date();
-        DocumentReference documentReference = XimexUserRef
-                .collection("Ximexusers")
-                .document(mAuth.getCurrentUser().getUid());
+        try {
+            Date date = new Date();
+            DocumentReference documentReference = XimexUserRef
+                    .collection("Ximexusers")
+                    .document(mAuth.getCurrentUser().getUid());
 
-        XimexUser ximexUser = new XimexUser();
-        ximexUser.setFullname(ximexuserfullanme);
-        ximexUser.setCallsnumber(ximexusercellnum);
-        ximexUser.setUsersince(date.toString());
-        ximexUser.setUid(mAuth.getUid());
+            XimexUser ximexUser = new XimexUser();
+            ximexUser.setFullname(ximexuserfullanme);
+            ximexUser.setCallsnumber(ximexusercellnum);
+            ximexUser.setUsersince(date.toString());
+            ximexUser.setUid(mAuth.getUid());
 
-        //set ximexuser in firestore ximex users ref
-        documentReference.set(ximexUser).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                Toast.makeText(getApplicationContext(), "Signin successfull", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(SendOTP.this,Dashboard.class));
-                finish();
+            //set ximexuser in firestore ximex users ref
+            documentReference.set(ximexUser).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    Toast.makeText(getApplicationContext(), "Signin successfull", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(SendOTP.this, Dashboard.class));
+                    finish();
 
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(), "Error: Registration did not complete", Toast.LENGTH_SHORT).show();
-           return;
-            }
-        });}
-        catch (Exception e){
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getApplicationContext(), "Error: Registration did not complete", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            });
+        } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(getApplicationContext(), "Exception:"+e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Exception:" + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 }

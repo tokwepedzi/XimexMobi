@@ -6,6 +6,7 @@
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/drawable/dialog_bg.xml" value="0.2203125" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.2203125" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/drawable/menu_dots.xml" value="0.2203125" />
+        <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/drawable/side_nav_bar.xml" value="0.2203125" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/activity_dashboard.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/activity_post_ad.xml" value="0.22" />
@@ -22,9 +23,11 @@
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/layout_items_near_you.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/layout_listed_items.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/layout_myads_item.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/missing_info_dialog.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/nav_header_dashboard.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/permission_request.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/menu/activity_main_drawer.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/menu/dashboard.xml" value="0.20416666666666666" />
       </map>
     </option>
   </component>

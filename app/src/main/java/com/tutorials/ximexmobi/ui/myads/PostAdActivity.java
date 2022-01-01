@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageButton;
@@ -46,6 +47,7 @@ import java.util.Date;
 //import com.tutorials.ximexmobi.adapters.AdapterClassPostAd;
 
 public class PostAdActivity extends AppCompatActivity {
+    public static final String TAG ="PosAdSctivity";
     private ActivityPostAdBinding activityPostAdBinding;
     private ArrayList<Uri> imageUris;
     private ArrayList<byte[]> bitmapArrayListData;
@@ -191,6 +193,7 @@ public class PostAdActivity extends AppCompatActivity {
                                 adPostModel1.setPosteddate(todaydatestring);
                                 adPostModel1.setAvailability("Available");
                                 adPostModel1.setTotalviews("0");
+                                adPostModel1.setResponses("0");
                                 uploadImagesAndGetLinks(adPostModel1,documentReference);
                                 documentReference.set(adPostModel1);
                             }
@@ -210,60 +213,67 @@ public class PostAdActivity extends AppCompatActivity {
     }
 
     private void uploadImagesAndGetLinks(AdPostModel adPostModel1, DocumentReference documentReference) {
-      bitmapArrayListData.clear();
+     // bitmapArrayListData.clear();
         for(int i=0;i<imageUris.size();i++){
             StorageReference ImagesRef = storageReference.child(firebaseAuth.getUid()).child(adPostModel1.getAdid()).child(System.currentTimeMillis() + "." + "jpg");
             int j= i;
-            UploadTask uploadTask = ImagesRef.putBytes(bitmapArrayListData.get(i));
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    ImagesRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            imageUrls.add(uri.toString());
-                            try{
-                                switch (j){
-                                    case 0:
-                                        adPostModel1.setImg1(uri.toString());
-                                        break;
-                                    case 1:
-                                        adPostModel1.setImg2(uri.toString());
-                                        break;
-                                    case 2:
-                                        adPostModel1.setImg3(uri.toString());
-                                        break;
-                                    case 3:
-                                        adPostModel1.setImg4(uri.toString());
-                                        break;
-                                    case 4:
-                                        adPostModel1.setImg5(uri.toString());
-                                        break;
-                                    case 5:
-                                        adPostModel1.setImg6(uri.toString());
-                                        break;
-                                }}
-                            catch (Exception e){
-                                e.printStackTrace();
+            //while(!bitmapArrayListData.isEmpty()){
+                UploadTask uploadTask = ImagesRef.putBytes(bitmapArrayListData.get(j));
+                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        ImagesRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                imageUrls.add(uri.toString());
+                                try{
+                                    switch (j){
+                                        case 0:
+                                            adPostModel1.setImg1(uri.toString());
+                                            break;
+                                        case 1:
+                                            adPostModel1.setImg2(uri.toString());
+                                            break;
+                                        case 2:
+                                            adPostModel1.setImg3(uri.toString());
+                                            break;
+                                        case 3:
+                                            adPostModel1.setImg4(uri.toString());
+                                            break;
+                                        case 4:
+                                            adPostModel1.setImg5(uri.toString());
+                                            break;
+                                        case 5:
+                                            adPostModel1.setImg6(uri.toString());
+                                            break;
+                                    }}
+                                catch (Exception e){
+                                    e.printStackTrace();
+                                }
+
                             }
-
-                        }
-                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            if(task.isSuccessful()){
-                                documentReference.set(adPostModel1);
+                        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Uri> task) {
+                                if(task.isSuccessful()){
+                                    documentReference.set(adPostModel1);
+                                    return;
+                                }
                             }
-                        }
-                    });
+                        });
 
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "onAdUploadFailure: "+e.getMessage());
+                        Toast.makeText(getApplicationContext(), "Upload Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        return;
 
-                }
-            });
+                    }
+                });
+           // }
+
 
            /* ImagesRef.putFile(imageUris.get(i)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override

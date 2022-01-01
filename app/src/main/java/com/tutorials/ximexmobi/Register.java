@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.FirebaseApiNotAvailableException;
@@ -35,21 +36,24 @@ public class Register extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        // if  user is already signed in send them to dashboard
-        mAuth = FirebaseAuth.getInstance();
-        globalMethods = new GlobalMethods(getApplicationContext());
-        if(mAuth.getCurrentUser()!=null){ globalMethods.sendUserToDashboard();
-        finish();
-        }else {
-            return;
-        }
-        
+
     }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // if  user is already signed in send them to dashboard
+        mAuth = FirebaseAuth.getInstance();
+        globalMethods = new GlobalMethods(getApplicationContext());
+        if(mAuth.getCurrentUser()!=null){ globalMethods.sendUserToDashboard();
+            finish();
+        }else {
+            Toast.makeText(getApplicationContext(), "User not signed in!", Toast.LENGTH_SHORT).show();
+
+        }
+
         setContentView(R.layout.activity_main);
 
         // -----------Hooks--------------------------------------------------------------------------

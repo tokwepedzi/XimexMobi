@@ -1,18 +1,28 @@
 package com.tutorials.ximexmobi;
 
+import static com.tutorials.ximexmobi.Constants.XIMEX_USERS_REF;
+
 import android.Manifest;
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
@@ -23,17 +33,24 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.tutorials.ximexmobi.databinding.ActivityDashboardBinding;
 import com.tutorials.ximexmobi.models.XimexUser;
 
 public class Dashboard extends AppCompatActivity {
+    public static final String TAG = "Dashboardactvty";
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityDashboardBinding binding;
     private XimexUser ximexUser;
     private FirebaseAuth firebaseAuth;
-    private Dialog dialog;
+    private Dialog dialog,missingInfoDialog;
+    private FirebaseFirestore UsersRef;
+    private TextView mUserEmail;
 
 
     @Override
@@ -42,8 +59,8 @@ public class Dashboard extends AppCompatActivity {
 
         binding = ActivityDashboardBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-
+        // Get Users ref ----Firebase
+        UsersRef = FirebaseFirestore.getInstance();
 
         setSupportActionBar(binding.appBarDashboard.toolbar);
         binding.appBarDashboard.fab.setOnClickListener(new View.OnClickListener() {
@@ -53,12 +70,17 @@ public class Dashboard extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
         DrawerLayout drawer = binding.drawerLayout;
-        NavigationView navigationView = binding.navView;
+        //NavigationView navigationView = binding.navView;
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View hearderview = navigationView.getHeaderView(0);
+        mUserEmail = (TextView) hearderview.findViewById(R.id.user_nav_email);
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_my_ads,R.id.nav_ximex_store)
+                R.id.nav_home, R.id.nav_my_ads, R.id.nav_ximex_store)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_dashboard);
@@ -72,13 +94,15 @@ public class Dashboard extends AppCompatActivity {
 
         ximexUser = new XimexUser();
         ximexUser.setUid(firebaseAuth.getUid());
+
+        // Ask user for  location permission using dialog
         dialog = new Dialog(Dashboard.this);
         dialog.setContentView(R.layout.permission_request);
         dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialog_bg));
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.setCancelable(false);
-        if(ContextCompat.checkSelfPermission(Dashboard.this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(Dashboard.this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
             dialog.show();
         }
 
@@ -86,6 +110,7 @@ public class Dashboard extends AppCompatActivity {
         Button cancel = dialog.findViewById(R.id.permission_deny_btn);
 
 
+        // User accepts/grants location permission
         okay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -108,10 +133,65 @@ public class Dashboard extends AppCompatActivity {
             }
         });
 
+        //  User rejects location permission
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
+                return;
+
+            }
+        });
+
+        // Update UI fields with the appropriate user details
+        updateUI(ximexUser);
+
+    }
+
+    // gets user details as Ximexuser object from Firestore and updates UI fields
+    private void updateUI(XimexUser ximexUser) {
+        DocumentReference XimexUserRef = UsersRef.collection(XIMEX_USERS_REF).document(ximexUser.getUid());
+        XimexUserRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                XimexUser ximexUser1 = new XimexUser();
+                DocumentSnapshot documentSnapshot = task.getResult();
+                ximexUser1 = documentSnapshot.toObject(XimexUser.class);
+                mUserEmail.setText(ximexUser1.getEmail());
+                // Dialog: if user has no full details ask user to submit full details
+                if(ximexUser1.getGeoPoint()==(null)||ximexUser1.getSurburb()==null||ximexUser1.getCallsnumber()==null||ximexUser1.getWhatsappnumber()==null){
+                    missingInfoDialog = new Dialog(Dashboard.this);
+                    missingInfoDialog.setContentView(R.layout.missing_info_dialog);
+                    missingInfoDialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialog_bg));
+                    missingInfoDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    missingInfoDialog.setCancelable(false);
+
+                    Button update = missingInfoDialog.findViewById(R.id.missing_info_update_btn);
+                    Button notnow = missingInfoDialog.findViewById(R.id.missing_info_notnw_btn);
+                    missingInfoDialog.show();
+
+                    notnow.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            missingInfoDialog.dismiss();
+                        }
+                    });
+                    update.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            startActivity(new Intent(Dashboard.this,));
+                        }
+                    });
+
+                }
+
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "onUpdateUIFailure: " + e.getMessage());
+                Toast.makeText(getApplicationContext(), "User not found " + e.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
         });

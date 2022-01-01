@@ -8,13 +8,24 @@
     android:background="@color/yellow_theme"
     tools:context=".SendOTP">
 
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="vertical">
 
+        <ProgressBar
+            android:id="@+id/otp_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:outlineAmbientShadowColor="@color/white"
+            android:background="@color/white"/>
+
         <TextView
+            android:layout_marginTop="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -48,6 +59,16 @@
             android:layout_marginTop="10dp"
             android:backgroundTint="@color/black"
             android:text="continue" />
+
+        <Button
+            android:id="@+id/resend_btn"
+            android:layout_width="200dp"
+            android:layout_height="55dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:visibility="invisible"
+            android:backgroundTint="@color/black"
+            android:text="resend" />
 
 
     </LinearLayout>
