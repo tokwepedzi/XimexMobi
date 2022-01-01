@@ -10,7 +10,7 @@ public class XimexUser {
     private @ServerTimestamp
     Date timestamp;
     public String fullname, email, whatsappnumber,usersince,uid,callsnumber,
-            totalitemsbought,totalitemssold,usertype,address,surburb;
+            totalitemsbought,totalitemssold,usertype,address,surburb,profilepic;
 
     public XimexUser() {
     }
@@ -18,7 +18,7 @@ public class XimexUser {
     public XimexUser(GeoPoint geoPoint, Date timestamp, String fullname, String email,
                      String whatsappnumber, String usersince, String uid, String callsnumber,
                      String totalitemsbought, String usertype, String address, String surburb,
-                     String totalads) {
+                     String totalads,String profilepic) {
         this.geoPoint = geoPoint;
         this.timestamp = timestamp;
         this.fullname = fullname;
@@ -32,6 +32,7 @@ public class XimexUser {
         this.address = address;
         this.surburb = surburb;
         this.totalitemssold = totalads;
+        this.profilepic = profilepic;
     }
 
     public GeoPoint getGeoPoint() {
@@ -136,5 +137,13 @@ public class XimexUser {
 
     public void setTotalitemssold(String totalitemssold) {
         this.totalitemssold = totalitemssold;
+    }
+
+    public String getProfilepic() {
+        return profilepic;
+    }
+
+    public void setProfilepic(String profilepic) {
+        this.profilepic = profilepic;
     }
 }

@@ -179,7 +179,7 @@ public class Dashboard extends AppCompatActivity {
                     update.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            startActivity(new Intent(Dashboard.this,));
+                            startActivity(new Intent(Dashboard.this,SubmitUserInfo.class));
                         }
                     });
 
