@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/view_ad_bottom_sheet_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:id="@+id/heading_linear"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="@color/yellow_theme"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/image_switcher_linear"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/heading_text_view"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/image_switcher_linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/heading_linear">
+
+        <ImageSwitcher
+            android:id="@+id/switcher"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+        <LinearLayout
+            android:id="@+id/switch_image_buttons_linear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@id/advert_text_linearview"
+            app:layout_constraintTop_toBottomOf="@id/image_switcher_linear">
+
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+
+                <ImageButton
+                    android:id="@+id/previous_image"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="5dp"
+                    android:src="@drawable/ic_baseline_navigate_before_24" />
+
+                <ImageButton
+                    android:id="@+id/next_image"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="5dp"
+                    android:src="@drawable/ic_baseline_navigate_next_24" />
+
+
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/advert_text_linearview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/image_switcher_linear">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Condition: "
+                android:text="Price"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/price"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="15sp" />
+
+
+        </LinearLayout>
+
+        <View
+
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_margin="4dp"
+            android:background="@color/quantum_grey" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Condition: "
+                android:text="Posted"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/posted"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="15sp" />
+
+
+        </LinearLayout>
+
+        <View
+
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_margin="4dp"
+            android:background="@color/quantum_grey" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Distance"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/distance"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="15sp" />
+
+
+        </LinearLayout>
+
+        <View
+
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_margin="4dp"
+            android:background="@color/quantum_grey" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Condition"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/condition"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="15sp" />
+
+
+        </LinearLayout>
+
+        <View
+
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_margin="4dp"
+            android:background="@color/quantum_grey" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Condition: "
+                android:text="Contact"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/contact"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="15sp" />
+
+
+        </LinearLayout>
+
+        <View
+
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_margin="4dp"
+            android:background="@color/quantum_grey" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Email"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/email"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="15sp" />
+
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_margin="4dp"
+            android:background="@color/quantum_grey" />
+
+        <!-- <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:orientation="horizontal"
+             android:weightSum="3">
+
+             <TextView
+                 android:layout_width="0dp"
+                 android:layout_height="wrap_content"
+                 android:layout_weight="1"
+                 android:hint="Condition: "
+                 android:textColor="@color/black"
+                 android:textSize="18sp"
+                 android:textStyle="bold" />
+
+             <TextView
+                 android:layout_width="0dp"
+                 android:layout_height="wrap_content"
+                 android:layout_weight="2"
+                 android:hint="New" />
+
+
+         </LinearLayout>-->
+
+        <!-- <View
+
+             android:layout_width="fill_parent"
+             android:layout_height="0.5dp"
+             android:layout_margin="4dp"
+             android:background="@color/quantum_grey" />-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginBottom="15dp"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <ImageButton
+                android:id="@+id/call_advertiser"
+                android:layout_width="150dp"
+                android:layout_height="55dp"
+                android:layout_margin="20dp"
+                android:layout_weight="1"
+                android:background="@color/yellow_theme"
+                android:src="@drawable/ic_baseline_call_24"
+                android:text="Call Advertiser" />
+
+            <ImageButton
+                android:id="@+id/whatsapp_advertiser"
+                android:layout_width="150dp"
+                android:layout_height="55dp"
+                android:layout_margin="20dp"
+                android:layout_weight="1"
+                android:background="@color/yellow_theme"
+                android:src="@drawable/ic_baseline_whatsapp_24" />
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

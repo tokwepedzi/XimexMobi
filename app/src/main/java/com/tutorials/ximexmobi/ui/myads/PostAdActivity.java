@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,7 +17,10 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
@@ -47,15 +51,20 @@ import java.util.Date;
 //import com.tutorials.ximexmobi.adapters.AdapterClassPostAd;
 
 public class PostAdActivity extends AppCompatActivity {
-    public static final String TAG ="PosAdSctivity";
+    public static final String TAG = "PosAdSctivity";
     private ActivityPostAdBinding activityPostAdBinding;
     private ArrayList<Uri> imageUris;
     private ArrayList<byte[]> bitmapArrayListData;
     private ArrayList<String> imageUrls;
-    private FirebaseFirestore AdsRef ;
+    private FirebaseFirestore AdsRef;
     private FirebaseAuth firebaseAuth;
     private StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+    private AutoCompleteTextView mCategoryAutocomplete, mConditionAutoComplete;
+    private ArrayList<String> categoryList, sortCondtionList;
+    private ArrayAdapter categoryAdapter;
+    private ArrayAdapter<String> sortConditionAdapter;
     private boolean isEditingAStatus;
+    private Dialog mProgress;
 
     //position of selected image
     int position = 0;
@@ -69,13 +78,21 @@ public class PostAdActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_ad);
-        try{
-        Intent intent = getIntent();
-        AdPostModel adPostModeleditable = (AdPostModel) intent.getSerializableExtra("editad");
-        Boolean isEditingAd = (Boolean) intent.getExtras().getBoolean("editingclicked") ;
-        isEditingAStatus = isEditingAd;}
-        catch (NullPointerException e){
-            isEditingAStatus=false;
+
+
+        mProgress = new Dialog(PostAdActivity.this);
+        mProgress.setContentView(R.layout.progress_bar_custom_dialog);
+        mProgress.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialog_bg));
+        mProgress.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        mProgress.setCancelable(false);
+
+        try {
+            Intent intent = getIntent();
+            AdPostModel adPostModeleditable = (AdPostModel) intent.getSerializableExtra("editad");
+            Boolean isEditingAd = (Boolean) intent.getExtras().getBoolean("editingclicked");
+            isEditingAStatus = isEditingAd;
+        } catch (NullPointerException e) {
+            isEditingAStatus = false;
             e.printStackTrace();
         }
 
@@ -91,10 +108,30 @@ public class PostAdActivity extends AppCompatActivity {
         final ImageButton previousImage = activityPostAdBinding.previousImage;
         final ImageButton mPostAd = activityPostAdBinding.doneAddingAdButton;
         final TextInputEditText mItemName = activityPostAdBinding.itemName;
-        final TextInputEditText mItemDescription = activityPostAdBinding.itemDescription;
+        mCategoryAutocomplete = activityPostAdBinding.autoCompleteCategory;
         final TextInputEditText mItemPrice = activityPostAdBinding.price;
-        final TextInputEditText mItemCondition = activityPostAdBinding.condition;
+        mConditionAutoComplete = activityPostAdBinding.autoCondition;
 
+        //Set Autocomplete lists for category and sortby
+        //todo change this to an interface oe something because same code is used in Post Ad activity
+        categoryList = new ArrayList<>();
+        categoryList.add("Laptop computers");
+        categoryList.add("Smartphones");
+        categoryList.add("Tablets");
+        categoryList.add("Smart watches");
+        categoryList.add("Other");
+        sortCondtionList = new ArrayList<>();
+        sortCondtionList.add("New");
+        sortCondtionList.add("Used");
+        //sortCondtionList.add("Price");
+
+        categoryAdapter = new ArrayAdapter<>(getApplicationContext(), R.layout.textview_layout_entity, categoryList);
+        sortConditionAdapter = new ArrayAdapter<>(getApplicationContext(), R.layout.textview_layout_entity, sortCondtionList);
+        mCategoryAutocomplete.setAdapter(categoryAdapter);
+        mCategoryAutocomplete.setThreshold(1);
+        mConditionAutoComplete.setAdapter(sortConditionAdapter);
+        mConditionAutoComplete.setThreshold(1);
+        //mCategoryAutocomplete.setText(categoryAdapter.getItem(0).toString(),false);
 
 
         //  init arraylist
@@ -115,6 +152,7 @@ public class PostAdActivity extends AppCompatActivity {
         addPhotosBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 pickImagesIntent();
             }
         });
@@ -140,7 +178,7 @@ public class PostAdActivity extends AppCompatActivity {
                 if (position < imageUris.size() - 1) {
                     position++;
                     activityPostAdBinding.switchImage.setImageURI(imageUris.get(position));
-                }else {
+                } else {
                     Toast.makeText(getApplicationContext(), "No more images to show!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -149,6 +187,7 @@ public class PostAdActivity extends AppCompatActivity {
         activityPostAdBinding.doneAddingAdButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mProgress.show();
                 getAdDetailsAndPost();
             }
         });
@@ -161,11 +200,11 @@ public class PostAdActivity extends AppCompatActivity {
             return;
         } else {
 
-            AdPostModel adPostModel= new AdPostModel();
+            AdPostModel adPostModel = new AdPostModel();
             adPostModel.setItemname(activityPostAdBinding.itemName.getEditableText().toString());
-            adPostModel.setDescription(activityPostAdBinding.itemDescription.getEditableText().toString());
+            adPostModel.setCategory(activityPostAdBinding.autoCompleteCategory.getEditableText().toString());
             adPostModel.setPrice(activityPostAdBinding.price.getEditableText().toString());
-            adPostModel.setCondition(activityPostAdBinding.condition.getEditableText().toString());
+            adPostModel.setCondition(activityPostAdBinding.autoCondition.getEditableText().toString());
             adPostModel.setUid(firebaseAuth.getUid());
 
 
@@ -182,7 +221,7 @@ public class PostAdActivity extends AppCompatActivity {
                     documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if(task.isSuccessful()){
+                            if (task.isSuccessful()) {
                                 AdPostModel adPostModel1 = new AdPostModel();
                                 String adid = documentReference.getId();
                                 adPostModel1 = task.getResult().toObject(AdPostModel.class);
@@ -194,8 +233,16 @@ public class PostAdActivity extends AppCompatActivity {
                                 adPostModel1.setAvailability("Available");
                                 adPostModel1.setTotalviews("0");
                                 adPostModel1.setResponses("0");
-                                uploadImagesAndGetLinks(adPostModel1,documentReference);
+                                uploadImagesAndGetLinks(adPostModel1, documentReference);
                                 documentReference.set(adPostModel1);
+                                mProgress.dismiss();
+                                activityPostAdBinding.itemName.setText("");
+                                activityPostAdBinding.price.setText("");
+                                activityPostAdBinding.switchImage.setImageURI(null);
+                                mCategoryAutocomplete.setText("");
+                                mConditionAutoComplete.setText("");
+                                imageUris.clear();
+                                bitmapArrayListData.clear();
                             }
 
                         }
@@ -213,66 +260,66 @@ public class PostAdActivity extends AppCompatActivity {
     }
 
     private void uploadImagesAndGetLinks(AdPostModel adPostModel1, DocumentReference documentReference) {
-     // bitmapArrayListData.clear();
-        for(int i=0;i<imageUris.size();i++){
+        // bitmapArrayListData.clear();
+        for (int i = 0; i < imageUris.size(); i++) {
             StorageReference ImagesRef = storageReference.child(firebaseAuth.getUid()).child(adPostModel1.getAdid()).child(System.currentTimeMillis() + "." + "jpg");
-            int j= i;
+            int j = i;
             //while(!bitmapArrayListData.isEmpty()){
-                UploadTask uploadTask = ImagesRef.putBytes(bitmapArrayListData.get(j));
-                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        ImagesRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                imageUrls.add(uri.toString());
-                                try{
-                                    switch (j){
-                                        case 0:
-                                            adPostModel1.setImg1(uri.toString());
-                                            break;
-                                        case 1:
-                                            adPostModel1.setImg2(uri.toString());
-                                            break;
-                                        case 2:
-                                            adPostModel1.setImg3(uri.toString());
-                                            break;
-                                        case 3:
-                                            adPostModel1.setImg4(uri.toString());
-                                            break;
-                                        case 4:
-                                            adPostModel1.setImg5(uri.toString());
-                                            break;
-                                        case 5:
-                                            adPostModel1.setImg6(uri.toString());
-                                            break;
-                                    }}
-                                catch (Exception e){
-                                    e.printStackTrace();
+            UploadTask uploadTask = ImagesRef.putBytes(bitmapArrayListData.get(j));
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    ImagesRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            imageUrls.add(uri.toString());
+                            try {
+                                switch (j) {
+                                    case 0:
+                                        adPostModel1.setImg1(uri.toString());
+                                        break;
+                                    case 1:
+                                        adPostModel1.setImg2(uri.toString());
+                                        break;
+                                    case 2:
+                                        adPostModel1.setImg3(uri.toString());
+                                        break;
+                                    case 3:
+                                        adPostModel1.setImg4(uri.toString());
+                                        break;
+                                    case 4:
+                                        adPostModel1.setImg5(uri.toString());
+                                        break;
+                                    case 5:
+                                        adPostModel1.setImg6(uri.toString());
+                                        break;
                                 }
-
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Uri> task) {
-                                if(task.isSuccessful()){
-                                    documentReference.set(adPostModel1);
-                                    return;
-                                }
+
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if (task.isSuccessful()) {
+                                documentReference.set(adPostModel1);
+                                return;
                             }
-                        });
+                        }
+                    });
 
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "onAdUploadFailure: "+e.getMessage());
-                        Toast.makeText(getApplicationContext(), "Upload Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                        return;
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "onAdUploadFailure: " + e.getMessage());
+                    Toast.makeText(getApplicationContext(), "Upload Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    return;
 
-                    }
-                });
-           // }
+                }
+            });
+            // }
 
 
            /* ImagesRef.putFile(imageUris.get(i)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -351,12 +398,6 @@ public class PostAdActivity extends AppCompatActivity {
         }
 
 
-
-
-
-
-
-
     }
 
     private String getFileExtension(Uri uri) {
@@ -374,6 +415,7 @@ public class PostAdActivity extends AppCompatActivity {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
                         if (data.getClipData() != null) {
+
                             int count = data.getClipData().getItemCount();
                             if (count > 6) {
                                 Toast.makeText(getApplicationContext(), "A maximum of six images is allowed", Toast.LENGTH_SHORT).show();
@@ -385,22 +427,22 @@ public class PostAdActivity extends AppCompatActivity {
                                 Uri imageUri = data.getClipData().getItemAt(i).getUri();
                                 try {
 
-                                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(),Uri.parse(imageUri.toString()));
+                                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), Uri.parse(imageUri.toString()));
                                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                    if(bitmap.getWidth()>=bitmap.getHeight()){
-                                         editedbitmap = Bitmap.createBitmap(bitmap,bitmap.getWidth()/2 -bitmap.getHeight()/2,0
-                                        ,bitmap.getHeight(),bitmap.getHeight());
-                                        bitmap.compress(Bitmap.CompressFormat.JPEG,50,baos);
-                                    }else {
+                                    if (bitmap.getWidth() >= bitmap.getHeight()) {
+                                        editedbitmap = Bitmap.createBitmap(bitmap, bitmap.getWidth() / 2 - bitmap.getHeight() / 2, 0
+                                                , bitmap.getHeight(), bitmap.getHeight());
+                                        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+                                    } else {
                                         editedbitmap = Bitmap.createBitmap(
                                                 bitmap,
                                                 0,
-                                                bitmap.getHeight()/2 - bitmap.getWidth()/2,
+                                                bitmap.getHeight() / 2 - bitmap.getWidth() / 2,
                                                 bitmap.getWidth(),
                                                 bitmap.getWidth()
 
                                         );
-                                        bitmap.compress(Bitmap.CompressFormat.JPEG,50,baos);
+                                        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
 
                                     }
 
@@ -414,19 +456,21 @@ public class PostAdActivity extends AppCompatActivity {
 
                             }
                             //  set first image to our image switcher
+
                             activityPostAdBinding.switchImage.setImageURI(imageUris.get(0));
                             position = 0;
 
 
                         } else {
                             int count = (imageUris.size());
-                            if(count>5){
-                                Toast.makeText(getApplicationContext(), "Here six images is allowed"+count, Toast.LENGTH_SHORT).show();
+                            if (count > 5) {
+                                Toast.makeText(getApplicationContext(), "Here six images is allowed" + count, Toast.LENGTH_SHORT).show();
                                 return;
                             }
                             Uri imageUri = data.getData();
                             imageUris.add(imageUri);
                             //set  image to switcher
+
                             activityPostAdBinding.switchImage.setImageURI(imageUris.get(0));
                             position = 0;
                         }
@@ -458,6 +502,7 @@ public class PostAdActivity extends AppCompatActivity {
         }
 
     }
+
     private boolean validateItemDescriptionInput() {
         String val = activityPostAdBinding.itemName.getEditableText().toString();
         if (val.isEmpty()) {
@@ -469,6 +514,7 @@ public class PostAdActivity extends AppCompatActivity {
         }
 
     }
+
     private boolean validateItemPriceInput() {
         String val = activityPostAdBinding.itemName.getEditableText().toString();
         if (val.isEmpty()) {
@@ -480,6 +526,7 @@ public class PostAdActivity extends AppCompatActivity {
         }
 
     }
+
     private boolean validateItemConditionInput() {
         String val = activityPostAdBinding.itemName.getEditableText().toString();
         if (val.isEmpty()) {

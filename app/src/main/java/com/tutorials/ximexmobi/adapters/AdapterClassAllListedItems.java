@@ -14,7 +14,12 @@ import com.bumptech.glide.Glide;
 import com.tutorials.ximexmobi.R;
 import com.tutorials.ximexmobi.models.AdPostModel;
 
+import org.ocpsoft.prettytime.PrettyTime;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class AdapterClassAllListedItems extends RecyclerView.Adapter<AdapterClassAllListedItems.ViewHolder> {
@@ -24,36 +29,38 @@ public class AdapterClassAllListedItems extends RecyclerView.Adapter<AdapterClas
     public AllListedAdClickListener listedAdClickListener;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView mPrice, mPostedDate;
-        private final ImageView mListedItemNearYouImage;
+        private final TextView mItemName, mPrice, mPostedDate;
+        private final ImageView mListedItemImage;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            mItemName = (TextView) itemView.findViewById(R.id.listed_item_name);
             mPrice = (TextView) itemView.findViewById(R.id.listed_item_price);
-            mPostedDate = (TextView) itemView.findViewById(R.id.listed_item_price);
-            mListedItemNearYouImage = (ImageView) itemView.findViewById(R.id.listed_item_image);
+            mPostedDate = (TextView) itemView.findViewById(R.id.listed_item_posted_date);
+            mListedItemImage = (ImageView) itemView.findViewById(R.id.listed_item_image);
 
         }
 
         public ImageView getListedItemPic() {
-            return mListedItemNearYouImage;
+            return mListedItemImage;
         }
     }
 
-    public AdapterClassAllListedItems(List<AdPostModel> adPostModelList, Context context, AllListedAdClickListener listedAdClickListener){
+    public AdapterClassAllListedItems(List<AdPostModel> adPostModelList, Context context, AllListedAdClickListener listedAdClickListener) {
         this.adPostModelList = adPostModelList;
         this.context = context;
-        this.listedAdClickListener=listedAdClickListener;
+        this.listedAdClickListener = listedAdClickListener;
     }
 
-    public interface AllListedAdClickListener{
+    public interface AllListedAdClickListener {
         void viewAllSelectedAd(AdPostModel adPostModel);
     }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
-        View view = LayoutInflater.from(context).inflate(R.layout.layout_listed_items,parent,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.layout_listed_items, parent, false);
         return new ViewHolder(view);
 
     }
@@ -61,28 +68,36 @@ public class AdapterClassAllListedItems extends RecyclerView.Adapter<AdapterClas
     @Override
     public void onBindViewHolder(@NonNull AdapterClassAllListedItems.ViewHolder holder, int position) {
         AdapterClassAllListedItems.ViewHolder viewHolder = (AdapterClassAllListedItems.ViewHolder) holder;
-        AdPostModel adPostModel = adPostModelList.get(position);
 
-        holder.mPrice.setText("Price: "+adPostModel.getPrice());
-        holder.mPostedDate.setText("Posted on "+adPostModel.getPosteddate());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        Date postedDate = new Date();
 
+        AdPostModel adPostModel = adPostModelList.get(position);;
+        try {
+            postedDate = simpleDateFormat.parse(adPostModel.getPosteddate());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        PrettyTime prettyTime = new PrettyTime();
+
+        holder.mItemName.setText(adPostModel.getItemname());
+        holder.mPrice.setText("Price: " + adPostModel.getPrice());
+        holder.mPostedDate.setText(prettyTime.format(postedDate));
 
 
         Glide.with(holder.getListedItemPic()).load(adPostModel.getImg1())
                 .placeholder(R.mipmap.imageplaceholder)
                 .centerCrop()
                 .thumbnail(0.05f)
-                .into(holder.mListedItemNearYouImage);
+                .into(holder.mListedItemImage);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                try{
-                    //Recyclerview click listener suspended due to transaction too large runtime exception on android 8 device
-                    /*debtoClickListener.selectedDebtor(debtor);*/
-                }
-                catch (Exception e){
+                try {
+                   listedAdClickListener.viewAllSelectedAd(adPostModel);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -95,7 +110,6 @@ public class AdapterClassAllListedItems extends RecyclerView.Adapter<AdapterClas
     public int getItemCount() {
         return adPostModelList.size();
     }
-
 
 
 }

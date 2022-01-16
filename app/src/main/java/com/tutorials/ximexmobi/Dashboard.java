@@ -33,11 +33,9 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.tutorials.ximexmobi.databinding.ActivityDashboardBinding;
 import com.tutorials.ximexmobi.models.XimexUser;
 
@@ -48,14 +46,29 @@ public class Dashboard extends AppCompatActivity {
     private ActivityDashboardBinding binding;
     private XimexUser ximexUser;
     private FirebaseAuth firebaseAuth;
-    private Dialog dialog,missingInfoDialog;
+    private Dialog dialog,missingInfoDialog,mProgress;
     private FirebaseFirestore UsersRef;
     private TextView mUserEmail;
 
 
     @Override
+    public void onBackPressed() {
+       // super.onBackPressed();
+        Toast.makeText(getApplicationContext(), "Leaving", Toast.LENGTH_SHORT).show();
+        finish();
+        System.exit(0);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mProgress = new Dialog(Dashboard.this);
+        mProgress.setContentView(R.layout.progress_bar_custom_dialog);
+        mProgress.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialog_bg));
+        mProgress.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        mProgress.setCancelable(false);
+        mProgress.show();
 
         binding = ActivityDashboardBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -95,9 +108,11 @@ public class Dashboard extends AppCompatActivity {
         ximexUser = new XimexUser();
         ximexUser.setUid(firebaseAuth.getUid());
 
+        mProgress.dismiss();
+
         // Ask user for  location permission using dialog
         dialog = new Dialog(Dashboard.this);
-        dialog.setContentView(R.layout.permission_request);
+        dialog.setContentView(R.layout.location_permission_request);
         dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialog_bg));
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.setCancelable(false);
@@ -145,12 +160,13 @@ public class Dashboard extends AppCompatActivity {
 
         // Update UI fields with the appropriate user details
         updateUI(ximexUser);
+        mProgress.show();
 
     }
 
     // gets user details as Ximexuser object from Firestore and updates UI fields
     private void updateUI(XimexUser ximexUser) {
-        DocumentReference XimexUserRef = UsersRef.collection(XIMEX_USERS_REF).document(ximexUser.getUid());
+       try {DocumentReference XimexUserRef = UsersRef.collection(XIMEX_USERS_REF).document(ximexUser.getUid());
         XimexUserRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -158,6 +174,7 @@ public class Dashboard extends AppCompatActivity {
                 DocumentSnapshot documentSnapshot = task.getResult();
                 ximexUser1 = documentSnapshot.toObject(XimexUser.class);
                 mUserEmail.setText(ximexUser1.getEmail());
+                mProgress.dismiss();
                 // Dialog: if user has no full details ask user to submit full details
                 if(ximexUser1.getGeoPoint()==(null)||ximexUser1.getSurburb()==null||ximexUser1.getCallsnumber()==null||ximexUser1.getWhatsappnumber()==null){
                     missingInfoDialog = new Dialog(Dashboard.this);
@@ -179,7 +196,14 @@ public class Dashboard extends AppCompatActivity {
                     update.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            startActivity(new Intent(Dashboard.this,SubmitUserInfo.class));
+                            missingInfoDialog.dismiss();
+                            startActivity(new Intent(Dashboard.this, UserInfo.class));
+                            /*FragmentManager fragmentManager = getSupportFragmentManager();
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            fragmentTransaction.replace(R.id.nav_host_fragment_content_dashboard, new UserInfoFragment(),"move_to_userinfo");
+                            fragmentTransaction.commit();*/
+                           /* getSupportFragmentManager().beginTransaction().add(R.id.nav_host_fragment_content_dashboard
+                                    ,new UserInfoFragment()).commit();*/
                         }
                     });
 
@@ -194,7 +218,12 @@ public class Dashboard extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "User not found " + e.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
-        });
+        });}
+       catch (Exception e){
+           e.printStackTrace();
+           Toast.makeText(getApplicationContext(), "Error: "+"PERMISSION_DENIED", Toast.LENGTH_SHORT).show();
+           Log.d(TAG, "updateUI: PERMISSION_DENIED: Missing or insufficient permissions.");
+       }
 
     }
 

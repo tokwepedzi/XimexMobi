@@ -74,12 +74,12 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/items_near_your_linear">
 
-                <View
+              <!--  <View
                     android:id="@+id/divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="10dp"
-                    android:background="#A9A9A9" />
+                    android:background="#A9A9A9" />-->
 
                 <TextView
                     android:id="@+id/items_listed_heading_txt"
@@ -100,7 +100,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:orientation="horizontal"
-                    android:weightSum="3"
+                    android:weightSum="2"
                     app:layout_constraintBottom_toTopOf="@id/listed_items_recyclerview"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -117,7 +117,7 @@
                         app:hintEnabled="false">
 
                         <AutoCompleteTextView
-                            android:id="@+id/auto_complete_item"
+                            android:id="@+id/auto_complete_category"
                             style="@android:style/Widget.Holo.AutoCompleteTextView"
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
@@ -132,12 +132,29 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
 
-                    <androidx.appcompat.widget.SearchView
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/text_input_category"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="0dp"
                         android:layout_height="50dp"
-                        android:layout_weight="2"
-                        android:focusedByDefault="true"
-                        app:queryHint="Location" />
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        app:hintEnabled="false">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/auto_complete_sort_by"
+                            style="@android:style/Widget.Holo.AutoCompleteTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:background="@null"
+                            android:freezesText="false"
+                            android:hint="Sort by"
+                            android:padding="10dp"
+                            android:singleLine="true"
+                            android:textColor="@color/black"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <!--  <LinearLayout
                           android:layout_width="match_parent"
@@ -151,6 +168,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:layout_marginTop="20dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 

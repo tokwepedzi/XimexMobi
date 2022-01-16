@@ -52,6 +52,7 @@ public class MyAdsFragment extends Fragment implements AdapterClassViewMyAds.Mya
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
+
         binding = FragmentMyadsBinding.inflate(inflater, container, false);
         recyclerView = binding.myadsRecyclerview;
 
@@ -116,6 +117,8 @@ public class MyAdsFragment extends Fragment implements AdapterClassViewMyAds.Mya
         super.onDestroyView();
         binding = null;
     }
+
+
 
     @Override
     public void deleteAd(AdPostModel adPostModel) {

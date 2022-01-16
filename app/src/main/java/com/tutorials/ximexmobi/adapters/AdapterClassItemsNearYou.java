@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,13 +16,35 @@ import com.bumptech.glide.Glide;
 import com.tutorials.ximexmobi.R;
 import com.tutorials.ximexmobi.models.AdPostModel;
 
+import org.ocpsoft.prettytime.PrettyTime;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-public class AdapterClassItemsNearYou extends RecyclerView.Adapter<AdapterClassItemsNearYou.ViewHolder> {
+public class AdapterClassItemsNearYou extends RecyclerView.Adapter<AdapterClassItemsNearYou.ViewHolder> implements Filterable {
 public List<AdPostModel> adPostModelList = new ArrayList<>();
 public Context context;
 public ListedAdClickListener listedAdClickListener;
+
+    @Override
+    public Filter getFilter() {
+        Filter filter = new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                return null;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+
+            }
+
+        };
+        return null;
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView mPrice, mPostedDate;
@@ -64,10 +88,20 @@ public ListedAdClickListener listedAdClickListener;
     @Override
     public void onBindViewHolder(@NonNull AdapterClassItemsNearYou.ViewHolder holder, int position) {
         ViewHolder viewHolder = (ViewHolder) holder;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        Date postedDate = new Date();
+
         AdPostModel adPostModel = adPostModelList.get(position);
+        try {
+            postedDate = simpleDateFormat.parse(adPostModel.getPosteddate());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        PrettyTime prettyTime = new PrettyTime();
+
 
         holder.mPrice.setText("Price: "+adPostModel.getPrice());
-        holder.mPostedDate.setText("Posted on "+adPostModel.getPosteddate());
+        holder.mPostedDate.setText(prettyTime.format(postedDate));
 
 
 
@@ -82,9 +116,8 @@ public ListedAdClickListener listedAdClickListener;
             public void onClick(View view) {
 
                 try{
-                    //Recyclerview click listener suspended due to transaction too large runtime exception on android 8 device
-                    /*debtoClickListener.selectedDebtor(debtor);*/
-                }
+
+listedAdClickListener.viewSelectedAd(adPostModel);                }
                 catch (Exception e){
                     e.printStackTrace();
                 }

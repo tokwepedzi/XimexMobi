@@ -16,17 +16,24 @@
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/content_dashboard.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/delete_item_alert_dialog.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/fragment_gallery.xml" value="0.20416666666666666" />
-        <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/fragment_home.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/fragment_home.xml" value="0.22" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/fragment_myads.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/fragment_settings.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/fragment_slideshow.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/fragment_user_info.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/fragment_ximexstore.xml" value="0.1" />
+        <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/layout_bottom_shhet_advert_images.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/layout_items_near_you.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/layout_listed_items.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/layout_myads_item.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/location_permission_request.xml" value="0.25" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/missing_info_dialog.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/nav_header_dashboard.xml" value="0.20416666666666666" />
-        <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/permission_request.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/permission_request.xml" value="0.5" />
+        <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/progress_bar_custom_dialog.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/storage_permission_request.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/textview_layout_entity.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/layout/view_advert_bottom_sheet_layout.xml" value="0.25" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/menu/activity_main_drawer.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Pedzi/AndroidStudioProjects/XimexMobi/app/src/main/res/menu/dashboard.xml" value="0.20416666666666666" />
       </map>

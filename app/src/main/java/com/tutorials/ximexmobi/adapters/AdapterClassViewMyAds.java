@@ -82,7 +82,7 @@ public class AdapterClassViewMyAds extends RecyclerView.Adapter <AdapterClassVie
             holder.mStatus.setText("Status: " + adPostModel.getAvailability());
             holder.mViews.setText("Total views: " + adPostModel.getTotalviews());
             holder.mResponses.setText("Response: " + adPostModel.getResponses());
-            holder.mHeadline.setText(adPostModel.getDescription());
+            holder.mHeadline.setText(adPostModel.getItemname());
            // int totalviews = Integer.parseInt(adPostModelList.get(holder.getLayoutPosition()).getTotalviews());
             // int totalresponses = Integer.parseInt(adPostModelList.get(holder.getLayoutPosition()).getResponses());
              //int rate =( totalresponses / totalviews)*100;

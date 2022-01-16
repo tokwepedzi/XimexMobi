@@ -34,10 +34,11 @@
                 android:id="@+id/top_image_linear"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
+                android:layout_below="@+id/add_images_text_heading"
                 android:layout_marginTop="10dp"
                 android:orientation="horizontal"
-                android:weightSum="3"
-                android:layout_below="@+id/add_images_text_heading">
+                android:weightSum="3">
+
                 <ImageSwitcher
                     android:id="@+id/switch_image"
                     android:layout_width="match_parent"
@@ -134,20 +135,6 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:hint="Item Description?">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/item_description"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -164,20 +151,54 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
-                    android:hint="Condition (New or 2nd hand?)">
+                    android:layout_marginTop="5dp"
+                    android:background="@color/white"
+                    app:hintEnabled="false">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/condition"
+                    <AutoCompleteTextView
+                        android:id="@+id/auto_complete_category"
+                        style="@android:style/Widget.Holo.AutoCompleteTextView"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="55dp"
+                        android:background="@null"
+                        android:freezesText="false"
+                        android:hint="Category"
+                        android:padding="10dp"
+                        android:singleLine="true"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </com.google.android.material.textfield.TextInputLayout>
 
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/white"
+                    app:hintEnabled="false">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/auto_condition"
+                        style="@android:style/Widget.Holo.AutoCompleteTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:background="@null"
+                        android:freezesText="false"
+                        android:hint="Condtion"
+                        android:padding="10dp"
+                        android:singleLine="true"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
                 </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -191,7 +212,6 @@
                     android:layout_marginEnd="8dp"
                     android:background="@color/yellow_theme"
                     android:src="@drawable/ic_baseline_done_24" />
-
             </LinearLayout>
 
 
