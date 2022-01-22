@@ -10,11 +10,11 @@
     <LinearLayout
         android:id="@+id/heading_linear"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="40dp"
         android:background="@color/yellow_theme"
         android:gravity="center"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@id/image_switcher_linear"
+        app:layout_constraintBottom_toTopOf="@id/recycler_linear"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -23,68 +23,90 @@
             android:id="@+id/heading_text_view"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:textSize="18sp"
+            android:textSize="17sp"
             android:textStyle="bold" />
 
 
     </LinearLayout>
 
-
     <LinearLayout
-        android:id="@+id/image_switcher_linear"
-        android:layout_width="match_parent"
+        android:id="@+id/recycler_linear"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:layout_marginBottom="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/advert_text_linearview"
         app:layout_constraintTop_toBottomOf="@+id/heading_linear">
 
-        <ImageSwitcher
-            android:id="@+id/switcher"
+        <androidx.recyclerview.widget.RecyclerView
+
+            android:id="@+id/ad_images_recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="200dp" />
-
-        <LinearLayout
-            android:id="@+id/switch_image_buttons_linear"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@id/advert_text_linearview"
-            app:layout_constraintTop_toBottomOf="@id/image_switcher_linear">
-
-            <androidx.coordinatorlayout.widget.CoordinatorLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-
-                <ImageButton
-                    android:id="@+id/previous_image"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginStart="5dp"
-                    android:src="@drawable/ic_baseline_navigate_before_24" />
-
-                <ImageButton
-                    android:id="@+id/next_image"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="end"
-                    android:layout_marginEnd="5dp"
-                    android:src="@drawable/ic_baseline_navigate_next_24" />
-
-
-            </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-
-        </LinearLayout>
+            android:layout_height="match_parent"
+            android:layout_marginBottom="5dp"/>
 
 
     </LinearLayout>
+
+
+    <!--
+        <LinearLayout
+            android:id="@+id/image_switcher_linear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/heading_linear">
+
+            <ImageSwitcher
+                android:id="@+id/switcher"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
+
+            <LinearLayout
+                android:id="@+id/switch_image_buttons_linear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toTopOf="@id/advert_text_linearview"
+                app:layout_constraintTop_toBottomOf="@id/image_switcher_linear">
+
+                <androidx.coordinatorlayout.widget.CoordinatorLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+
+                    <ImageButton
+                        android:id="@+id/previous_image"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginStart="5dp"
+                        android:src="@drawable/ic_baseline_navigate_before_24" />
+
+                    <ImageButton
+                        android:id="@+id/next_image"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_gravity="end"
+                        android:layout_marginEnd="5dp"
+                        android:src="@drawable/ic_baseline_navigate_next_24" />
+
+
+                </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+    -->
 
 
     <LinearLayout
@@ -95,7 +117,7 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_switcher_linear">
+        app:layout_constraintTop_toBottomOf="@+id/recycler_linear">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -110,14 +132,14 @@
                 android:hint="Condition: "
                 android:text="Price"
                 android:textColor="@color/black"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/price"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
 
 
         </LinearLayout>
@@ -142,14 +164,14 @@
                 android:hint="Condition: "
                 android:text="Posted"
                 android:textColor="@color/black"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/posted"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
 
 
         </LinearLayout>
@@ -173,14 +195,14 @@
                 android:layout_weight="1"
                 android:text="Distance"
                 android:textColor="@color/black"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/distance"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
 
 
         </LinearLayout>
@@ -204,14 +226,14 @@
                 android:layout_weight="1"
                 android:text="Condition"
                 android:textColor="@color/black"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/condition"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
 
 
         </LinearLayout>
@@ -236,14 +258,14 @@
                 android:hint="Condition: "
                 android:text="Contact"
                 android:textColor="@color/black"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/contact"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
 
 
         </LinearLayout>
@@ -267,14 +289,14 @@
                 android:layout_weight="1"
                 android:text="Email"
                 android:textColor="@color/black"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/email"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
 
 
         </LinearLayout>

@@ -1,6 +1,7 @@
 package com.tutorials.ximexmobi.adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.net.UrlQuerySanitizer;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 import com.tutorials.ximexmobi.R;
 import com.tutorials.ximexmobi.models.AdPostModel;
 
@@ -22,73 +25,55 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdapterClassViewAdInBottomSheet extends RecyclerView.Adapter<AdapterClassViewAdInBottomSheet.ViewHolder> {
-    public AdPostModel adPostModel = new AdPostModel();
-    private List<URL> urlList = new ArrayList<>();
+
+    private List<String> urlList;
     public Context context;
-    //public ActionClickListener actionClickListener;
+
+    public AdapterClassViewAdInBottomSheet(Context context, ArrayList<String> urlList) {
+        this.context = context;
+        this.urlList = urlList;
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        //private final TextView mHeading,mPrice,mDateposted,mDistance,mCondition,mContactnumber,mContactemail;
-        // private final ImageButton mCallAdvertiser,mWhatsappAdevertiser;
         private final ImageView mItemImage;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             mItemImage = (ImageView) itemView.findViewById(R.id.item_image);
-            // mHeading = (TextView) itemView.findViewById(R.id.heading_text_view);
-            //  mPrice = (TextView) itemView.findViewById(R.id.price);
-            // mDateposted = (TextView) itemView.findViewById(R.id.posted);
-            // mDistance = (TextView) itemView.findViewById(R.id.distance);
-            // mCondition = (TextView) itemView.findViewById(R.id.condition);
-            // mContactnumber = (TextView) itemView.findViewById(R.id.condition);
-            // mContactemail = (TextView) itemView.findViewById(R.id.email);
-            // mContactnumber = (TextView) itemView.findViewById(R.id.condition);
-            // mCallAdvertiser = (ImageButton) itemView.findViewById(R.id.call_advertiser);
-            // mWhatsappAdevertiser = (ImageButton) itemView.findViewById(R.id.whatsapp_advertiser);
-
+           // mImageProgress = (ImageView) itemView.findViewById(R.id.loading_indicator);
         }
-
-        public ImageView getListedItemPic() {
-            return mItemImage;
-        }
-
-       /* public AdPostModel getAdPostModel() {
-            return adPostModel;
-        }*/
     }
-
-    public AdapterClassViewAdInBottomSheet(AdPostModel adPostModel, List<URL> urlList, Context context) {
-
-        this.adPostModel = adPostModel;
-        this.urlList = urlList;
-        this.context = context;
-    }
-
-   /* public interface ActionClickListener{
-        void lauchSelectedAction(AdPostModel adPostModel);
-    }*/
 
     @NonNull
     @Override
     public AdapterClassViewAdInBottomSheet.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
-        View view = LayoutInflater.from(context).inflate(R.layout.layout_bottom_sheet_advert_images, parent, true);
+        View view = LayoutInflater.from(context).inflate(R.layout.layout_bottom_sheet_advert_images, parent, false);
         return new ViewHolder(view);
     }
-
     @Override
-    public void onBindViewHolder(@NonNull AdapterClassViewAdInBottomSheet.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ViewHolder viewHolder = (ViewHolder) holder;
-        //AdPostModel adPostModel = holder.getAdPostModel();
+        Uri uri = Uri.parse(urlList.get(position));
+        Picasso.get()
+                .load(uri)
+                .placeholder(R.drawable.image_progress_animation)
+                .into(holder.mItemImage, new Callback() {
+            @Override
+            public void onSuccess() {
+               // holder.mImageProgress.setVisibility(View.GONE);
+            }
 
-       // Glide.with(holder.getListedItemPic()).load(urlList.get(position))
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
     }
-
 
     @Override
     public int getItemCount() {
-        return 0;
+        return urlList.size();
     }
-
 
 }

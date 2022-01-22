@@ -6,12 +6,14 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,8 +38,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
 import com.tutorials.ximexmobi.databinding.ActivityDashboardBinding;
 import com.tutorials.ximexmobi.models.XimexUser;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Dashboard extends AppCompatActivity {
     public static final String TAG = "Dashboardactvty";
@@ -49,6 +54,7 @@ public class Dashboard extends AppCompatActivity {
     private Dialog dialog,missingInfoDialog,mProgress;
     private FirebaseFirestore UsersRef;
     private TextView mUserEmail;
+    private CircleImageView mProfPic;
 
 
     @Override
@@ -75,20 +81,24 @@ public class Dashboard extends AppCompatActivity {
         // Get Users ref ----Firebase
         UsersRef = FirebaseFirestore.getInstance();
 
+
         setSupportActionBar(binding.appBarDashboard.toolbar);
-        binding.appBarDashboard.fab.setOnClickListener(new View.OnClickListener() {
+
+        //sms/message floating action button onclickListener
+       /* binding.appBarDashboard.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
 
         DrawerLayout drawer = binding.drawerLayout;
         //NavigationView navigationView = binding.navView;
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         View hearderview = navigationView.getHeaderView(0);
         mUserEmail = (TextView) hearderview.findViewById(R.id.user_nav_email);
+        mProfPic = (CircleImageView) hearderview.findViewById(R.id.user_prof_pic) ;
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -174,6 +184,10 @@ public class Dashboard extends AppCompatActivity {
                 DocumentSnapshot documentSnapshot = task.getResult();
                 ximexUser1 = documentSnapshot.toObject(XimexUser.class);
                 mUserEmail.setText(ximexUser1.getEmail());
+                Picasso.get()
+                        .load(Uri.parse(ximexUser1.getProfilepic()))
+                        .placeholder(R.drawable.ic_baseline_account_circle_24)
+                        .into(mProfPic);
                 mProgress.dismiss();
                 // Dialog: if user has no full details ask user to submit full details
                 if(ximexUser1.getGeoPoint()==(null)||ximexUser1.getSurburb()==null||ximexUser1.getCallsnumber()==null||ximexUser1.getWhatsappnumber()==null){

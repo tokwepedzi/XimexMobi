@@ -21,9 +21,9 @@
             android:id="@+id/nav_ximex_store"
             android:icon="@drawable/ic_cart_icon"
             android:title="Ximex Store" />
-       <!-- <item
+        <item
             android:id="@+id/nav_user_profile"
             android:icon="@drawable/ic_baseline_account_circle_24"
-            android:title="Profile" />-->
+            android:title="Profile" />
     </group>
 </menu>

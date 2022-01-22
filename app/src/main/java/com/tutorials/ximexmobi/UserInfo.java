@@ -49,6 +49,7 @@ import com.google.firebase.storage.UploadTask;
 import com.tutorials.ximexmobi.adapters.PlacesAutoCompleteAdapter;
 import com.tutorials.ximexmobi.databinding.ActivitySubmitUserInfoBinding;
 import com.tutorials.ximexmobi.models.XimexUser;
+import com.tutorials.ximexmobi.ui.myads.PostAdActivity;
 
 import java.util.List;
 
@@ -59,7 +60,7 @@ public class UserInfo extends AppCompatActivity {
     private ActivitySubmitUserInfoBinding binding;
     private FirebaseFirestore firebaseFirestoreRef;
     private FirebaseAuth mAuth;
-    private Dialog dialog;
+    private Dialog dialog,mProgress;
     private Uri imageUri;
     private XimexUser ximexUser;
     private StorageReference storageReference;
@@ -145,6 +146,12 @@ public class UserInfo extends AppCompatActivity {
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialog_bg));
         dialog.setCancelable(false);
+
+        mProgress = new Dialog(UserInfo.this);
+        mProgress.setContentView(R.layout.progress_bar_custom_dialog);
+        mProgress.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialog_bg));
+        mProgress.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        mProgress.setCancelable(false);
         if (ContextCompat.checkSelfPermission(UserInfo.this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             dialog.show();
@@ -226,11 +233,14 @@ public class UserInfo extends AppCompatActivity {
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mProgress.show();
                 //  check  that no fields are empty
                 if (!validateFullNameInput()|!validateCellnumberInput()|!validateLocationInput()|
                         !validateEmailInput()|!validateProfilePicInput()) {
+                    mProgress.dismiss();
                     return;
                 } else if(ximexUser.getProfilepic()==null){
+
 
                     StorageReference UserProfilePictureRef = storageReference.child(mAuth.getCurrentUser()
                             .getUid()).child("Profile picture").child(System.currentTimeMillis()+"."+getFileExtension(imageUri));
@@ -247,11 +257,13 @@ public class UserInfo extends AppCompatActivity {
                                     XimexUserRef.set(ximexUser).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void unused) {
+                                            mProgress.dismiss();
                                             Toast.makeText(getApplicationContext(), "User details updated successfully", Toast.LENGTH_SHORT).show();
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
+                                            mProgress.dismiss();
                                             Toast.makeText(getApplicationContext(), "Failed to  update user details", Toast.LENGTH_SHORT).show();
 
                                         }
@@ -264,10 +276,12 @@ public class UserInfo extends AppCompatActivity {
                         public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
                             //progress bar set visibility to visible
 
+
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+                            mProgress.dismiss();
                             Toast.makeText(getApplicationContext(), "Failed to upload profile picture!", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -279,11 +293,13 @@ public class UserInfo extends AppCompatActivity {
                     XimexUserRef.set(ximexUser).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
+                            mProgress.dismiss();
                             Toast.makeText(getApplicationContext(), "User details updated successfully", Toast.LENGTH_SHORT).show();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+                            mProgress.dismiss();
                             Toast.makeText(getApplicationContext(), "Failed to  update user details", Toast.LENGTH_SHORT).show();
 
                         }
@@ -338,8 +354,6 @@ public class UserInfo extends AppCompatActivity {
             location.getLongitude();
             point = new GeoPoint((double) (location.getLatitude()),(double) (location.getLongitude()));
             ximexUser.setGeoPoint(point);
-            //todo remove toast later
-            Toast.makeText(getApplicationContext(), "Doepoint is : "+point.getLatitude()+" "+point.getLongitude(), Toast.LENGTH_LONG).show();
         }catch (Exception e){
             e.printStackTrace();
         }

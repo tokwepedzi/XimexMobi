@@ -75,6 +75,9 @@ dependencies {
     //Pretty time
     implementation 'org.ocpsoft.prettytime:prettytime:5.0.2.Final'
 
+    //Picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
 
 //Google places API
     //AIzaSyBToAk1bKP6XbZDtiPRLje3HXBpp31Kj6k

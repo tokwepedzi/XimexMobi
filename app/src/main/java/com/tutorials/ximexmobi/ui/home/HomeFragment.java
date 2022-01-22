@@ -2,8 +2,13 @@ package com.tutorials.ximexmobi.ui.home;
 
 import static com.tutorials.ximexmobi.Constants.XIMEX_USERS_REF;
 
+import android.Manifest;
 import android.app.Dialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,13 +18,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
-import android.widget.ImageSwitcher;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,10 +40,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.tutorials.ximexmobi.Dashboard;
 import com.tutorials.ximexmobi.R;
 import com.tutorials.ximexmobi.adapters.AdapterClassAllListedItems;
 import com.tutorials.ximexmobi.adapters.AdapterClassItemsNearYou;
+import com.tutorials.ximexmobi.adapters.AdapterClassViewAdInBottomSheet;
 import com.tutorials.ximexmobi.databinding.FragmentHomeBinding;
 import com.tutorials.ximexmobi.models.AdPostModel;
 import com.tutorials.ximexmobi.models.XimexUser;
@@ -48,13 +52,12 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Period;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class HomeFragment extends Fragment implements AdapterClassItemsNearYou.ListedAdClickListener, AdapterClassAllListedItems.AllListedAdClickListener {
+public class HomeFragment extends Fragment implements AdapterClassItemsNearYou.ListedAdClickListener,
+        AdapterClassAllListedItems.AllListedAdClickListener {
 
     public static final String TAG = "HomeFragment";
     //private HomeViewModel homeViewModel;
@@ -62,6 +65,7 @@ public class HomeFragment extends Fragment implements AdapterClassItemsNearYou.L
     private RecyclerView recyclerViewAdsNearYou, recyclerViewListedItems;
     private AdapterClassItemsNearYou viewAllListedAdsAdapter;
     private AdapterClassAllListedItems secondAdapter;
+    AdapterClassViewAdInBottomSheet adapter;
     private List<AdPostModel> adPostModelNearYouList, adPostModelListedItems;
     private FirebaseFirestore ListedItemsRef, XimexUsersRef;
     private FirebaseAuth mAuth;
@@ -115,7 +119,7 @@ public class HomeFragment extends Fragment implements AdapterClassItemsNearYou.L
         recyclerViewListedItems.setLayoutManager(secondLayoutManager);
         adPostModelNearYouList = new ArrayList<>();
         adPostModelListedItems = new ArrayList<>();
-         myselfLocation = new Location("");
+        myselfLocation = new Location("");
 
         //Set Autocomplete lists for category and sortby
         //todo change this to an interface oe something because same code is used in Post Ad activity
@@ -322,7 +326,7 @@ public class HomeFragment extends Fragment implements AdapterClassItemsNearYou.L
 
     private void showSelectedAdInBottomSheet(AdPostModel adPostModel) {
         mProgress.show();
-       // XimexUser advertiserUser = new XimexUser();
+        // XimexUser advertiserUser = new XimexUser();
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);
         View bottomSheetView = LayoutInflater.from(getContext())
                 .inflate(
@@ -333,9 +337,10 @@ public class HomeFragment extends Fragment implements AdapterClassItemsNearYou.L
         FirebaseFirestore AdvertiserRef = FirebaseFirestore.getInstance();
 
         TextView mHeading = bottomSheetView.findViewById(R.id.heading_text_view);
-        ImageSwitcher switcher = bottomSheetView.findViewById(R.id.switcher);
-        ImageButton previousImage = bottomSheetView.findViewById(R.id.previous_image);
-        ImageButton nextImage = bottomSheetView.findViewById(R.id.next_image);
+        //ImageSwitcher switcher = bottomSheetView.findViewById(R.id.switcher);
+        RecyclerView recyclerView = bottomSheetView.findViewById(R.id.ad_images_recyclerview);
+        ImageButton mCallAdvertiser = bottomSheetView.findViewById(R.id.call_advertiser);
+        ImageButton mWhatsAppAdevrtiser = bottomSheetView.findViewById(R.id.whatsapp_advertiser);
         TextView mPrice = bottomSheetView.findViewById(R.id.price);
         TextView mPostedDate = bottomSheetView.findViewById(R.id.posted);
         TextView mDistance = bottomSheetView.findViewById(R.id.distance);
@@ -343,7 +348,33 @@ public class HomeFragment extends Fragment implements AdapterClassItemsNearYou.L
         TextView mContact = bottomSheetView.findViewById(R.id.contact);
         TextView mEmail = bottomSheetView.findViewById(R.id.email);
 
+        final ArrayList<String> urlList;
+        urlList = new ArrayList<>();
+        urlList.clear();
+        if (adPostModel.getImg1() != null) {
+            urlList.add(adPostModel.getImg1());
+        }
+        if (adPostModel.getImg2() != null) {
+            urlList.add(adPostModel.getImg2());
+        }
+        if (adPostModel.getImg3() != null) {
+            urlList.add(adPostModel.getImg3());
+        }
+        if (adPostModel.getImg4() != null) {
+            urlList.add(adPostModel.getImg4());
+        }
+        if (adPostModel.getImg5() != null) {
+            urlList.add(adPostModel.getImg5());
+        }
+        if (adPostModel.getImg6() != null) {
+            urlList.add(adPostModel.getImg6());
+        }
 
+        LinearLayoutManager thirdlinearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(thirdlinearLayoutManager);
+
+        adapter = new AdapterClassViewAdInBottomSheet(getContext(), urlList);
+        recyclerView.setAdapter(adapter);
         //
 
         try {
@@ -355,6 +386,7 @@ public class HomeFragment extends Fragment implements AdapterClassItemsNearYou.L
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     // documentSnapshot = task.getResult();
+
                     advertiser = documentSnapshot.toObject(XimexUser.class);
                     Date postedDate = new Date();
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -363,7 +395,7 @@ public class HomeFragment extends Fragment implements AdapterClassItemsNearYou.L
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                   //Date today = new Date();
+                    //Date today = new Date();
                     PrettyTime today = new PrettyTime();
                     Location selectedAdLocation = new Location("");
                     selectedAdLocation.setLatitude(advertiser.getGeoPoint().getLatitude());
@@ -372,13 +404,19 @@ public class HomeFragment extends Fragment implements AdapterClassItemsNearYou.L
                     mHeading.setText(adPostModel.getItemname());
                     mPrice.setText(adPostModel.getPrice());
                     mPostedDate.setText(today.format(postedDate));
-                    mDistance.setText(Math.round(distanceaway/1000)+" Km away");
+                    mDistance.setText(Math.round(distanceaway / 1000) + " Km away");
                     mCondition.setText(adPostModel.getCondition());
                     mContact.setText(advertiser.getCallsnumber());
                     mEmail.setText(advertiser.getEmail());
                     mProgress.dismiss();
                     bottomSheetDialog.setContentView(bottomSheetView);
                     bottomSheetDialog.show();
+                    int totalviews = Integer.parseInt(adPostModel.getTotalviews());
+                    totalviews++;
+                    adPostModel.setTotalviews(Integer.toString(totalviews));
+                    ListedItemsRef.collection("Adverts").document(adPostModel.getAdid()).set(adPostModel);
+
+
                 }
             });
 
@@ -387,6 +425,128 @@ public class HomeFragment extends Fragment implements AdapterClassItemsNearYou.L
 
         }
 
+        mWhatsAppAdevrtiser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                try {
+                    Uri uri = Uri.parse("smsto:" + advertiser.getCallsnumber());
+                    Intent i = new Intent(Intent.ACTION_SENDTO, uri);
+                    i.setType("text/plain");
+                    String messagebody = "Hi " + advertiser.getFullname() + "I saw your " + adPostModel.
+                            getItemname() + " advert on Ximex Mobi,  is this item still available?";
+                    // i.setType("text/plain");
+                    // i.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.share_subject));
+                    i.putExtra(android.content.Intent.EXTRA_TEXT, messagebody);
+                    i.setData(Uri.parse("smsto:" + advertiser.getCallsnumber()));
+                    i.setPackage("com.whatsapp");
+                    increamentTotalResponses(adPostModel);
+                    startActivity(i);
+                } catch (Exception e) {
+                    Toast.makeText(getActivity(), "" + e.getMessage(), Toast.LENGTH_LONG).show();
+
+                }
+
+/*
+               if (isWhatsAppInstalled()){
+                    Intent  intent = new Intent(Intent.ACTION_VIEW,Uri.parse("https://whatsapp.com/send?phone="
+                            +advertiser.getCallsnumber()+"&text="+"Hey I saw your add on XimexMobi"));
+                    startActivity(intent);
+                }else{
+                    Toast.makeText(getActivity(), "WhatsApp not found!", Toast.LENGTH_SHORT).show();
+                }*/
+            }
+        });
+
+        mCallAdvertiser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                if (isPermissionGranted()) {
+                    call_action();
+                    increamentTotalResponses(adPostModel);
+                }
+            }
+        });
+
+    }
+
+    private void increamentTotalResponses(AdPostModel adPostModel) {
+        int totalresponses = Integer.parseInt(adPostModel.getResponses());
+        totalresponses++;
+        adPostModel.setResponses(Integer.toString(totalresponses));
+        ListedItemsRef.collection("Adverts").document(adPostModel.getAdid()).set(adPostModel);
+
+    }
+
+    private boolean isPermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CALL_PHONE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v("TAG", "Permission is granted");
+                return true;
+            } else {
+
+                Log.v("TAG", "Permission is revoked");
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, 1);
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            Log.v("TAG", "Permission is granted");
+            return true;
+        }
+    }
+
+    private boolean isWhatsAppInstalled() {
+        PackageManager packageManager = getActivity().getPackageManager();
+        boolean whatsappinstalled;
+        try {
+            packageManager.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES);
+            whatsappinstalled = true;
+        } catch (PackageManager.NameNotFoundException e) {
+            whatsappinstalled = false;
+
+        }
+        return whatsappinstalled;
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+
+            case 1: {
+
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getActivity(), "Permission granted", Toast.LENGTH_SHORT).show();
+                    call_action();
+                } else {
+                    Toast.makeText(getActivity(), "Permission denied", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+    private void call_action() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_CALL);
+        intent.setData(Uri.parse("tel:" + advertiser.getCallsnumber()));
+        // if(intent.resolveActivity(getActivity().getPackageManager())!=null){
+
+        //}
+        try {
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), "" + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
 
