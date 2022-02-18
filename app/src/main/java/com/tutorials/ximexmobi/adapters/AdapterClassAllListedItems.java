@@ -1,11 +1,13 @@
 package com.tutorials.ximexmobi.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +26,7 @@ import java.util.List;
 
 public class AdapterClassAllListedItems extends RecyclerView.Adapter<AdapterClassAllListedItems.ViewHolder> {
 
+    public static final String TAG = "AdptAllListdItems";
     public List<AdPostModel> adPostModelList = new ArrayList<>();
     public Context context;
     public AllListedAdClickListener listedAdClickListener;
@@ -80,6 +83,7 @@ public class AdapterClassAllListedItems extends RecyclerView.Adapter<AdapterClas
         }
         PrettyTime prettyTime = new PrettyTime();
 
+        try{
         holder.mItemName.setText(adPostModel.getItemname());
         holder.mPrice.setText("Price: " + adPostModel.getPrice());
         holder.mPostedDate.setText(prettyTime.format(postedDate));
@@ -101,7 +105,12 @@ public class AdapterClassAllListedItems extends RecyclerView.Adapter<AdapterClas
                     e.printStackTrace();
                 }
             }
-        });
+        });}
+        catch (Exception e){
+            e.printStackTrace();
+            Toast.makeText(context.getApplicationContext(), "ERR "+ e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "onBindViewHolder: AllItems "+e.getMessage());
+        }
 
     }
 

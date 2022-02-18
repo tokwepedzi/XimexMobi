@@ -153,14 +153,23 @@ public class HomeFragment extends Fragment implements AdapterClassItemsNearYou.L
         MyUserDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                DocumentSnapshot documentSnapshot = task.getResult();
-                mySelfUser = documentSnapshot.toObject(XimexUser.class);
+                try {
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    mySelfUser = documentSnapshot.toObject(XimexUser.class);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), "User info not available, try later", Toast.LENGTH_SHORT).show();
+                   // return;
+                }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.d(TAG, "onFailureHomeFragmnt_addmySelfUser: ");
                 e.printStackTrace();
+                Toast.makeText(getContext(), "User info not available, try later", Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -257,7 +266,6 @@ public class HomeFragment extends Fragment implements AdapterClassItemsNearYou.L
 
                                         if (category.equals("Laptop computers") && adPostModel1.getCategory().equals("Laptop computers")) {
                                             adPostModelListedItems.add(adPostModel1);
-                                            Toast.makeText(getContext(), "" + adPostModel1.getAdid(), Toast.LENGTH_SHORT).show();
                                         } else if (category.equals("Smartphones") && adPostModel1.getCategory().equals("Smartphones")) {
                                             adPostModelListedItems.add(adPostModel1);
                                         } else if (category.equals("Tablets") && adPostModel1.getCategory().equals("Tablets")) {
@@ -272,8 +280,7 @@ public class HomeFragment extends Fragment implements AdapterClassItemsNearYou.L
 
 
                                     } catch (Exception e) {
-                                        //todo remove toast later
-                                        // Toast.makeText(getContext(), "ERRR:::" + e.getMessage(), Toast.LENGTH_SHORT).show();
+
                                     }
                                     setAdapter();
                                     mProgress.dismiss();
@@ -312,7 +319,6 @@ public class HomeFragment extends Fragment implements AdapterClassItemsNearYou.L
 
     @Override
     public void viewSelectedAd(AdPostModel adPostModel) {
-        Toast.makeText(getActivity(), "" + adPostModel.getAdid(), Toast.LENGTH_SHORT).show();
         showSelectedAdInBottomSheet(adPostModel);
 
     }
@@ -545,6 +551,7 @@ public class HomeFragment extends Fragment implements AdapterClassItemsNearYou.L
         try {
             startActivity(intent);
         } catch (Exception e) {
+            e.printStackTrace();
             Toast.makeText(getActivity(), "" + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }

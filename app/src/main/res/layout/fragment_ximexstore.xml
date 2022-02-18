@@ -4,16 +4,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.store.XimexStoreFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="30sp"
-        android:textColor="@color/black_primary"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:text="Ximex Store Fragment" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+        <ImageView
+            android:layout_marginTop="40dp"
+            android:id="@+id/store_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:layout_gravity="center"
+            android:gravity="center"
+          android:src="@mipmap/onlinestore"
+
+            android:text="Store opening soon!" />
+
+        <!-- TODO: Update blank fragment layout -->
+        <TextView
+            android:layout_marginTop="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:textColor="@color/yellow_theme"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textStyle="bold"
+
+            android:text="Store opening soon!" />
+
+    </LinearLayout>
+
+
 
 </FrameLayout>
