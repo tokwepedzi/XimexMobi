@@ -180,6 +180,7 @@ public class Dashboard extends AppCompatActivity {
         XimexUserRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                try {
                 XimexUser ximexUser1 = new XimexUser();
                 DocumentSnapshot documentSnapshot = task.getResult();
                 ximexUser1 = documentSnapshot.toObject(XimexUser.class);
@@ -190,7 +191,7 @@ public class Dashboard extends AppCompatActivity {
                         .into(mProfPic);
                 mProgress.dismiss();
                 // Dialog: if user has no full details ask user to submit full details
-                if(ximexUser1.getGeoPoint()==(null)||ximexUser1.getSurburb()==null||ximexUser1.getCallsnumber()==null||ximexUser1.getWhatsappnumber()==null){
+                if (ximexUser1.getGeoPoint() == (null) || ximexUser1.getSurburb() == null || ximexUser1.getCallsnumber() == null || ximexUser1.getWhatsappnumber() == null) {
                     missingInfoDialog = new Dialog(Dashboard.this);
                     missingInfoDialog.setContentView(R.layout.missing_info_dialog);
                     missingInfoDialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialog_bg));
@@ -222,7 +223,11 @@ public class Dashboard extends AppCompatActivity {
                     });
 
                 }
-
+            }
+                catch (Exception e){
+                    mProgress.dismiss();
+                    e.printStackTrace();
+                }
 
             }
         }).addOnFailureListener(new OnFailureListener() {

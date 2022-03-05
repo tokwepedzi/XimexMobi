@@ -84,10 +84,17 @@ public class AdapterClassAllListedItems extends RecyclerView.Adapter<AdapterClas
         PrettyTime prettyTime = new PrettyTime();
 
         try{
+
+            try {
+
+
         holder.mItemName.setText(adPostModel.getItemname());
         holder.mPrice.setText("Price: " + adPostModel.getPrice());
         holder.mPostedDate.setText(prettyTime.format(postedDate));
-
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
 
         Glide.with(holder.getListedItemPic()).load(adPostModel.getImg1())
                 .placeholder(R.mipmap.imageplaceholder)

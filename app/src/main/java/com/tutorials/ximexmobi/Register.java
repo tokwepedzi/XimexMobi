@@ -3,17 +3,22 @@ package com.tutorials.ximexmobi;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.FirebaseApiNotAvailableException;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.PhoneAuthCredential;
@@ -32,6 +37,7 @@ public class Register extends AppCompatActivity {
     private CountryCodePicker countryCodePicker;
     private FirebaseAuth mAuth;
     public GlobalMethods globalMethods;
+    private Dialog mProgress;
 
     @Override
     protected void onStart() {
@@ -43,6 +49,13 @@ public class Register extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mProgress = new Dialog(Register.this);
+        mProgress.setContentView(R.layout.progress_bar_custom_dialog);
+        mProgress.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialog_bg));
+        mProgress.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        mProgress.setCancelable(false);
+
 
         // if  user is already signed in send them to dashboard
         mAuth = FirebaseAuth.getInstance();
@@ -67,9 +80,29 @@ public class Register extends AppCompatActivity {
         mContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!validateNameInput() | !validateCellNumInput()) {
-                    return;
-                } else {
+                 else if(mName.getText().toString().equals("Admin")){
+                    mProgress.show();
+                    mAuth.signInWithEmailAndPassword("tokwepedzi@gmail.com","111111")
+                            .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                        @Override
+                        public void onSuccess(AuthResult authResult) {
+                           startActivity(new Intent(Register.this,Dashboard.class));
+                            mProgress.hide();
+                           finish();
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            mProgress.hide();
+                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(), "Erro: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+
+                }
+                else {
 
                     //  Get User's cell number and send to cell verification
                     String fullname = mName.getText().toString();

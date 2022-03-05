@@ -140,6 +140,10 @@ public class UserInfo extends AppCompatActivity {
             }
         });
 
+        try {
+
+
+
         //Ask user for permission to access internal storage using alert dialog
         dialog = new Dialog(UserInfo.this);
         dialog.setContentView(R.layout.storage_permission_request);
@@ -151,10 +155,17 @@ public class UserInfo extends AppCompatActivity {
         mProgress.setContentView(R.layout.progress_bar_custom_dialog);
         mProgress.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialog_bg));
         mProgress.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        mProgress.setCancelable(false);
+        mProgress.setCancelable(false);  }
+        catch (Exception e){
+            Toast.makeText(getApplicationContext(), "UserInfoErr: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
         if (ContextCompat.checkSelfPermission(UserInfo.this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            dialog.show();
+            try{
+            dialog.show();}
+            catch (Exception e){
+                Toast.makeText(getApplicationContext(), "UserInfoErr 1"+ e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
 
         Button okay = dialog.findViewById(R.id.permission_gran_btn);

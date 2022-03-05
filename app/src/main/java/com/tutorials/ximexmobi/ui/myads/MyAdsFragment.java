@@ -110,6 +110,9 @@ public class MyAdsFragment extends Fragment implements AdapterClassViewMyAds.Mya
     private void setAdapter() {
         viewMyAdsApater = new AdapterClassViewMyAds(adPostModelList, getContext(), this::deleteAd);
         recyclerView.setAdapter(viewMyAdsApater);
+        if(adPostModelList.size()==0){
+            Toast.makeText(getActivity(), "You do not have any adverts to show", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
