@@ -60,7 +60,7 @@ public class UserInfo extends AppCompatActivity {
     private ActivitySubmitUserInfoBinding binding;
     private FirebaseFirestore firebaseFirestoreRef;
     private FirebaseAuth mAuth;
-    private Dialog dialog,mProgress;
+    private Dialog dialog, mProgress;
     private Uri imageUri;
     private XimexUser ximexUser;
     private StorageReference storageReference;
@@ -91,7 +91,7 @@ public class UserInfo extends AppCompatActivity {
                             Intent intent = result.getData();
                             imageUri = intent.getData();
                             mProfPic.setImageURI(imageUri);
-                           // pre
+                            // pre
 
                         }
                     }
@@ -119,52 +119,50 @@ public class UserInfo extends AppCompatActivity {
                 mCellnumber.setText(ximexUser.getCallsnumber());
                 mSuburbAutoComplete.setText(ximexUser.getSurburb());
                 mEmailAddress.setText(ximexUser.getEmail());
-               if(!(ximexUser.getProfilepic()==null)){
-                   try{
-                   Glide.with(getApplicationContext())
-                           .load(ximexUser.getProfilepic())
-                           .placeholder(getDrawable(R.drawable.ic_baseline_account_circle_24))
-                           .into(mProfPic);}
-                   catch (Exception e){
-                       //todo remove toast later
-                       Toast.makeText(getApplicationContext(), "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                   }
-               }
+                if (!(ximexUser.getProfilepic() == null)) {
+                    try {
+                        Glide.with(getApplicationContext())
+                                .load(ximexUser.getProfilepic())
+                                .placeholder(getDrawable(R.drawable.ic_baseline_account_circle_24))
+                                .into(mProfPic);
+                    } catch (Exception e) {
+                        //todo remove toast later
+                        Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
 
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.d(TAG, "onGetXimexUserInfoFailure: " + e.getMessage());
-
             }
         });
 
         try {
 
 
+            //Ask user for permission to access internal storage using alert dialog
+            dialog = new Dialog(UserInfo.this);
+            dialog.setContentView(R.layout.storage_permission_request);
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialog_bg));
+            dialog.setCancelable(false);
 
-        //Ask user for permission to access internal storage using alert dialog
-        dialog = new Dialog(UserInfo.this);
-        dialog.setContentView(R.layout.storage_permission_request);
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialog_bg));
-        dialog.setCancelable(false);
-
-        mProgress = new Dialog(UserInfo.this);
-        mProgress.setContentView(R.layout.progress_bar_custom_dialog);
-        mProgress.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialog_bg));
-        mProgress.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        mProgress.setCancelable(false);  }
-        catch (Exception e){
-            Toast.makeText(getApplicationContext(), "UserInfoErr: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+            mProgress = new Dialog(UserInfo.this);
+            mProgress.setContentView(R.layout.progress_bar_custom_dialog);
+            mProgress.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialog_bg));
+            mProgress.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            mProgress.setCancelable(false);
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "UserInfoErr: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         if (ContextCompat.checkSelfPermission(UserInfo.this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            try{
-            dialog.show();}
-            catch (Exception e){
-                Toast.makeText(getApplicationContext(), "UserInfoErr 1"+ e.getMessage(), Toast.LENGTH_SHORT).show();
+            try {
+                dialog.show();
+            } catch (Exception e) {
+                Toast.makeText(getApplicationContext(), "UserInfoErr 1" + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -246,15 +244,13 @@ public class UserInfo extends AppCompatActivity {
             public void onClick(View view) {
                 mProgress.show();
                 //  check  that no fields are empty
-                if (!validateFullNameInput()|!validateCellnumberInput()|!validateLocationInput()|
-                        !validateEmailInput()|!validateProfilePicInput()) {
+                if (!validateFullNameInput() | !validateCellnumberInput() | !validateLocationInput() |
+                        !validateEmailInput() | !validateProfilePicInput()) {
                     mProgress.dismiss();
                     return;
-                } else if(ximexUser.getProfilepic()==null){
-
-
+                } else if (ximexUser.getProfilepic() == null) {
                     StorageReference UserProfilePictureRef = storageReference.child(mAuth.getCurrentUser()
-                            .getUid()).child("Profile picture").child(System.currentTimeMillis()+"."+getFileExtension(imageUri));
+                            .getUid()).child("Profile picture").child(System.currentTimeMillis() + "." + getFileExtension(imageUri));
                     UserProfilePictureRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -286,8 +282,6 @@ public class UserInfo extends AppCompatActivity {
                         @Override
                         public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
                             //progress bar set visibility to visible
-
-
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -296,10 +290,7 @@ public class UserInfo extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Failed to upload profile picture!", Toast.LENGTH_SHORT).show();
                         }
                     });
-
-
-
-                }else{
+                } else {
                     getNewUserDetails();
                     XimexUserRef.set(ximexUser).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
@@ -351,21 +342,21 @@ public class UserInfo extends AppCompatActivity {
         ximexUser.setEmail(binding.email.getEditableText().toString().trim());
         ximexUser.setWhatsappnumber(ximexUser.getCallsnumber());
 
-        Geocoder  geocoder = new Geocoder(UserInfo.this);
+        Geocoder geocoder = new Geocoder(UserInfo.this);
         List<Address> address;
         GeoPoint point = null;
 
-        try{
-            address = geocoder.getFromLocationName(ximexUser.getSurburb(),1);
-            if(address==null){
+        try {
+            address = geocoder.getFromLocationName(ximexUser.getSurburb(), 1);
+            if (address == null) {
                 return null;
             }
             Address location = address.get(0);
             location.getLatitude();
             location.getLongitude();
-            point = new GeoPoint((double) (location.getLatitude()),(double) (location.getLongitude()));
+            point = new GeoPoint((double) (location.getLatitude()), (double) (location.getLongitude()));
             ximexUser.setGeoPoint(point);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -432,7 +423,7 @@ public class UserInfo extends AppCompatActivity {
     private boolean validateProfilePicInput() {
         Uri val = imageUri;
 
-        if (val==null&ximexUser.getProfilepic()==null) {
+        if (val == null & ximexUser.getProfilepic() == null) {
             Toast.makeText(getApplicationContext(), "No profile picture has been set!", Toast.LENGTH_SHORT).show();
             return false;
         } else {
